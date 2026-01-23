@@ -3,6 +3,10 @@
   "private": true,
   "version": "2.0.0",
   "type": "module",
+  "description": "SmartGain 2026 - Intelligent Weight Gain Planning Application with AI-powered nutrition algorithms",
+  "keywords": ["weight-gain", "nutrition", "fitness", "calorie-calculator", "2026", "ai-powered"],
+  "author": "SmartGain Development Team",
+  "license": "Apache-2.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
