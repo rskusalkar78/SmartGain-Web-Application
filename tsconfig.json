@@ -1,3 +1,5 @@
+// SmartGain 2026 - TypeScript Configuration
+// Modern TypeScript setup with optimized compiler options
 {
   "files": [],
   "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],

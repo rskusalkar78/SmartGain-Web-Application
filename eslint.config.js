@@ -1,3 +1,5 @@
+// SmartGain 2026 - ESLint Configuration
+// Modern linting setup for React 18 + TypeScript + Vite
 import js from "@eslint/js";
 import globals from "globals";
 import reactHooks from "eslint-plugin-react-hooks";

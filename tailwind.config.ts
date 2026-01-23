@@ -1,3 +1,5 @@
+// SmartGain 2026 - Tailwind CSS Configuration
+// Modern design system with advanced animations and 2026 UI patterns
 import type { Config } from "tailwindcss";
 
 export default {

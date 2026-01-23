@@ -1,3 +1,5 @@
+// SmartGain 2026 - App TypeScript Configuration
+// Optimized for React 18 + Vite + Modern ES2020+ features
 {
   "compilerOptions": {
     "types": ["vitest/globals"],

@@ -1,3 +1,5 @@
+// SmartGain 2026 - Node TypeScript Configuration
+// Optimized for Vite build tools and modern Node.js
 {
   "compilerOptions": {
     "target": "ES2022",

@@ -1,3 +1,5 @@
+// SmartGain 2026 - Vitest Configuration
+// Modern testing setup with React Testing Library + jsdom
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
