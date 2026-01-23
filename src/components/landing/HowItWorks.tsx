@@ -8,19 +8,19 @@ const steps = [
     icon: ClipboardList,
     step: "1",
     title: "Enter Your Details",
-    description: "Share your body stats & lifestyle preferences",
+    description: "Share your body stats, lifestyle & 2026 health goals",
   },
   {
     icon: Calculator,
     step: "2",
-    title: "Get Your Plan",
-    description: "Receive a personalized calorie + workout plan",
+    title: "Get Your AI Plan",
+    description: "Receive a personalized calorie + workout plan powered by 2026 algorithms",
   },
   {
     icon: TrendingUp,
     step: "3",
-    title: "Track & Adapt",
-    description: "Monitor progress and adapt weekly",
+    title: "Track & Evolve",
+    description: "Monitor progress with smart adaptations weekly",
   },
 ];
 
@@ -41,7 +41,7 @@ export function HowItWorks() {
             How <span className="gradient-text">SmartGain</span> Works
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            Three simple steps to your personalized weight gain journey.
+            Three simple steps to your personalized weight gain journey using 2026's most advanced algorithms.
           </p>
         </motion.div>
 

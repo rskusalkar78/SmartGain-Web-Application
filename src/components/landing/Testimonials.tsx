@@ -17,10 +17,10 @@ export function Testimonials() {
           className="text-center mb-12"
         >
           <h2 className="text-3xl md:text-4xl font-bold font-display mb-4">
-            Early User <span className="gradient-text">Results</span>
+            2026 Success <span className="gradient-text">Stories</span>
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            Real transformations from our beta community.
+            Real transformations from our growing community using cutting-edge 2026 methods.
           </p>
         </motion.div>
 
@@ -37,7 +37,7 @@ export function Testimonials() {
                 <User className="w-8 h-8 text-muted-foreground/50" />
               </div>
               <p className="text-muted-foreground/70 italic mb-4">
-                "Coming soon – real transformations"
+                "Coming soon – real 2026 transformations using our advanced algorithms"
               </p>
               <div className="w-24 h-3 mx-auto rounded bg-secondary" />
             </motion.div>

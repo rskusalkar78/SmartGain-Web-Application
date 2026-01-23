@@ -6,23 +6,23 @@ import { Gauge, RefreshCw, AlertTriangle, Moon } from 'lucide-react';
 const features = [
   {
     icon: Gauge,
-    title: "SmartGain Score",
-    description: "Rates plan quality in real time",
+    title: "2026 SmartGain Score",
+    description: "AI-powered plan quality rating in real time",
   },
   {
     icon: RefreshCw,
-    title: "Adaptive Calorie Engine",
-    description: "Adjusts weekly based on progress",
+    title: "Adaptive AI Engine",
+    description: "Machine learning adjusts weekly based on your progress",
   },
   {
     icon: AlertTriangle,
-    title: "Safety Alerts",
-    description: "Prevents unhealthy over-gaining",
+    title: "Advanced Safety Alerts",
+    description: "Prevents unhealthy over-gaining with 2026 health protocols",
   },
   {
     icon: Moon,
     title: "Lifestyle Intelligence",
-    description: "Sleep, water & recovery aware",
+    description: "Sleep, stress, water & recovery optimization",
   },
 ];
 
@@ -43,7 +43,7 @@ export function WhyDifferent() {
             Why <span className="gradient-text">SmartGain</span> Is Different
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            Built for intelligent, safe weight gain — not just calorie counting.
+            Built with 2026's most advanced nutrition science — not outdated calorie counting methods.
           </p>
         </motion.div>
 

@@ -8,9 +8,9 @@ interface HeroProps {
 }
 
 const cyclingTexts = [
-  "Personalized Calorie Intelligence",
-  "Adaptive Workout Planning",
-  "Safe, Science-Backed Weight Gain",
+  "2026's Most Advanced Calorie Intelligence",
+  "AI-Powered Workout Planning",
+  "Evidence-Based Weight Gain Science",
 ];
 
 const sciencePrinciples = [
@@ -72,7 +72,7 @@ export function Hero({ onGetStarted }: HeroProps) {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
             </span>
             <span className="text-sm font-medium text-secondary-foreground">
-              Science-backed weight gain planning
+              Latest 2026 nutrition science & research
             </span>
           </motion.div>
 
@@ -116,7 +116,7 @@ export function Hero({ onGetStarted }: HeroProps) {
             className="text-xl md:text-2xl text-muted-foreground mb-4 max-w-2xl mx-auto leading-relaxed"
           >
             Calculate your personalized daily calories, macros, and workout plans 
-            based on science — not guesswork.
+            using 2026's most advanced nutrition algorithms — not outdated formulas.
           </motion.p>
 
           {/* Supporting line */}
@@ -191,7 +191,7 @@ export function Hero({ onGetStarted }: HeroProps) {
           className="mt-8 max-w-4xl mx-auto"
         >
           <p className="text-center text-sm text-muted-foreground mb-6 uppercase tracking-wider">
-            Based on globally accepted nutrition science
+            Based on 2026's latest nutrition research & metabolic studies
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
