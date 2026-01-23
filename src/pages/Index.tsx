@@ -2,6 +2,10 @@ import { useState } from 'react';
 import { Hero } from '@/components/Hero';
 import { Calculator } from '@/components/Calculator';
 import { Results } from '@/components/Results';
+import { WhyDifferent } from '@/components/landing/WhyDifferent';
+import { HowItWorks } from '@/components/landing/HowItWorks';
+import { Testimonials } from '@/components/landing/Testimonials';
+import { Footer } from '@/components/landing/Footer';
 import { 
   UserData, 
   CalculationResult, 
@@ -43,9 +47,15 @@ const Index = () => {
   };
 
   return (
-    <div className="dark min-h-screen bg-background">
+    <main className="dark min-h-screen bg-background">
       {currentView === 'hero' && (
-        <Hero onGetStarted={handleGetStarted} />
+        <>
+          <Hero onGetStarted={handleGetStarted} />
+          <WhyDifferent />
+          <HowItWorks />
+          <Testimonials />
+          <Footer />
+        </>
       )}
       {currentView === 'calculator' && (
         <Calculator onCalculate={handleCalculate} onBack={handleBackToHero} />
@@ -58,7 +68,7 @@ const Index = () => {
           onReset={handleReset} 
         />
       )}
-    </div>
+    </main>
   );
 };
 

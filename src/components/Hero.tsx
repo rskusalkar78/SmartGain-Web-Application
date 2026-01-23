@@ -1,18 +1,53 @@
-import { motion } from 'framer-motion';
-import { ArrowRight, Dumbbell, TrendingUp, Utensils, Zap } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowRight, Dumbbell, TrendingUp, Utensils, Zap, Shield, ShieldCheck, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useState, useEffect } from 'react';
 
 interface HeroProps {
   onGetStarted: () => void;
 }
 
+const cyclingTexts = [
+  "Personalized Calorie Intelligence",
+  "Adaptive Workout Planning",
+  "Safe, Science-Backed Weight Gain",
+];
+
+const sciencePrinciples = [
+  {
+    title: "Energy Surplus Rule",
+    value: "7700",
+    unit: "kcal/kg",
+    explanation: "The energy needed to gain 1kg of body weight",
+  },
+  {
+    title: "Protein Synthesis",
+    value: "1.8g",
+    unit: "/kg",
+    explanation: "Optimal protein intake per kg of body weight",
+  },
+  {
+    title: "Safe Gain Rate",
+    value: "0.5kg",
+    unit: "/week",
+    explanation: "Maximum healthy weight gain per week",
+  },
+];
+
 export function Hero({ onGetStarted }: HeroProps) {
-  const features = [
-    { icon: TrendingUp, text: 'Smart Calorie Tracking' },
-    { icon: Utensils, text: 'Macro Optimization' },
-    { icon: Dumbbell, text: 'Custom Workouts' },
-    { icon: Zap, text: 'Science-Based' },
-  ];
+  const [currentTextIndex, setCurrentTextIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTextIndex((prev) => (prev + 1) % cyclingTexts.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleScrollToScience = () => {
+    const scienceSection = document.getElementById('science-principles');
+    scienceSection?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
@@ -29,7 +64,7 @@ export function Hero({ onGetStarted }: HeroProps) {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.3 }}
             className="inline-flex items-center gap-2 px-4 py-2 mb-8 rounded-full bg-secondary border border-border"
           >
             <span className="relative flex h-2 w-2">
@@ -45,30 +80,61 @@ export function Hero({ onGetStarted }: HeroProps) {
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-5xl md:text-7xl font-bold font-display tracking-tight mb-6"
+            transition={{ duration: 0.3, delay: 0.1 }}
+            className="text-5xl md:text-7xl font-bold font-display tracking-tight mb-4"
           >
             Gain Weight{' '}
             <span className="gradient-text">Intelligently</span>
           </motion.h1>
 
+          {/* Animated cycling subtext */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.15 }}
+            className="h-8 mb-6 overflow-hidden"
+          >
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={currentTextIndex}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25 }}
+                className="text-lg md:text-xl text-primary font-medium"
+              >
+                {cyclingTexts[currentTextIndex]}
+              </motion.p>
+            </AnimatePresence>
+          </motion.div>
+
           {/* Subtitle */}
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed"
+            transition={{ duration: 0.3, delay: 0.2 }}
+            className="text-xl md:text-2xl text-muted-foreground mb-4 max-w-2xl mx-auto leading-relaxed"
           >
             Calculate your personalized daily calories, macros, and workout plans 
             based on science — not guesswork.
           </motion.p>
 
-          {/* CTA Buttons */}
+          {/* Supporting line */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.25 }}
+            className="text-base text-muted-foreground/80 mb-10 font-medium"
+          >
+            Your body data. Your lifestyle. A smarter gain plan.
+          </motion.p>
+
+          {/* CTA Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
+            transition={{ duration: 0.3, delay: 0.3 }}
+            className="flex flex-col items-center justify-center gap-3 mb-6"
           >
             <Button 
               variant="hero" 
@@ -76,55 +142,87 @@ export function Hero({ onGetStarted }: HeroProps) {
               onClick={onGetStarted}
               className="group"
             >
-              Start Your Journey
+              Calculate My Smart Gain Plan
               <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
-            <Button variant="glass" size="xl">
-              Learn More
-            </Button>
+            
+            {/* Microcopy */}
+            <p className="text-sm text-muted-foreground">
+              Takes less than 60 seconds • No signup required
+            </p>
+            
+            {/* Secondary link */}
+            <button
+              onClick={handleScrollToScience}
+              className="text-sm text-primary hover:text-primary/80 underline underline-offset-4 transition-colors"
+            >
+              Is this safe for beginners?
+            </button>
           </motion.div>
 
-          {/* Feature pills */}
+          {/* Reassurance Banner */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="flex flex-wrap items-center justify-center gap-3"
+            transition={{ duration: 0.3, delay: 0.35 }}
+            className="flex flex-wrap items-center justify-center gap-4 md:gap-6 mb-16 px-6 py-4 rounded-2xl bg-secondary/50 border border-border/50 max-w-2xl mx-auto"
           >
-            {features.map((feature, index) => (
-              <motion.div
-                key={feature.text}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3, delay: 0.5 + index * 0.1 }}
-                className="flex items-center gap-2 px-4 py-2 rounded-full bg-card border border-border shadow-sm"
-              >
-                <feature.icon className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium">{feature.text}</span>
-              </motion.div>
-            ))}
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Users className="w-4 h-4 text-primary" />
+              <span>Designed for beginners</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Shield className="w-4 h-4 text-primary" />
+              <span>No supplements required</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <ShieldCheck className="w-4 h-4 text-primary" />
+              <span>Safety-first calculations</span>
+            </div>
           </motion.div>
         </div>
 
-        {/* Stats */}
+        {/* Science-Backed Principles Cards */}
         <motion.div
+          id="science-principles"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="mt-20 max-w-3xl mx-auto"
+          transition={{ duration: 0.3, delay: 0.4 }}
+          className="mt-8 max-w-4xl mx-auto"
         >
-          <div className="grid grid-cols-3 gap-8">
-            {[
-              { value: '7700', label: 'kcal per kg gain' },
-              { value: '1.8g', label: 'protein per kg' },
-              { value: '0.5kg', label: 'weekly max gain' },
-            ].map((stat, index) => (
-              <div key={stat.label} className="text-center">
-                <div className="text-3xl md:text-4xl font-bold font-display gradient-text mb-1">
-                  {stat.value}
+          <p className="text-center text-sm text-muted-foreground mb-6 uppercase tracking-wider">
+            Based on globally accepted nutrition science
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+            {sciencePrinciples.map((principle, index) => (
+              <motion.div
+                key={principle.title}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25, delay: 0.45 + index * 0.1 }}
+                className="group relative p-6 rounded-2xl bg-card border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10"
+              >
+                {/* Soft glow effect on hover */}
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                
+                <div className="relative z-10">
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">
+                    {principle.title}
+                  </p>
+                  <div className="flex items-baseline gap-1 mb-2">
+                    <span className="text-3xl md:text-4xl font-bold font-display gradient-text">
+                      {principle.value}
+                    </span>
+                    <span className="text-lg text-muted-foreground">
+                      {principle.unit}
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {principle.explanation}
+                  </p>
                 </div>
-                <div className="text-sm text-muted-foreground">{stat.label}</div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </motion.div>
