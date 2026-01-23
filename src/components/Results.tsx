@@ -1,43 +1,37 @@
 import { motion } from 'framer-motion';
 import { 
-  Flame, Target, Utensils, Dumbbell, AlertTriangle, 
-  TrendingUp, ArrowLeft, RotateCcw, ChevronRight
+  Dumbbell, ArrowLeft, ChevronRight, Rocket, 
+  Settings2, Info
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { UserData, CalculationResult, WorkoutPlan } from '@/lib/calculations';
 import { cn } from '@/lib/utils';
+
+// Import new result components
+import { PlanQualitySummary } from '@/components/results/PlanQualitySummary';
+import { EnhancedWarning } from '@/components/results/EnhancedWarning';
+import { AdaptiveCaloriesCard } from '@/components/results/AdaptiveCaloriesCard';
+import { MetabolicProfile } from '@/components/results/MetabolicProfile';
+import { MacroFoodEquivalents } from '@/components/results/MacroFoodEquivalents';
+import { WorkoutInsights } from '@/components/results/WorkoutInsights';
+import { DailyFocusChecklist } from '@/components/results/DailyFocusChecklist';
+import { ConfidenceIndicator } from '@/components/results/ConfidenceIndicator';
 
 interface ResultsProps {
   userData: UserData;
   results: CalculationResult;
   workoutPlan: WorkoutPlan;
   onReset: () => void;
+  onRecalculate?: (newUserData: Partial<UserData>) => void;
 }
 
-export function Results({ userData, results, workoutPlan, onReset }: ResultsProps) {
-  const macroData = [
-    { 
-      name: 'Protein', 
-      grams: results.protein, 
-      calories: results.proteinCalories,
-      color: 'from-primary to-warning',
-      percentage: Math.round((results.proteinCalories / results.dailyCalories) * 100)
-    },
-    { 
-      name: 'Carbs', 
-      grams: results.carbs, 
-      calories: results.carbCalories,
-      color: 'from-accent to-success',
-      percentage: Math.round((results.carbCalories / results.dailyCalories) * 100)
-    },
-    { 
-      name: 'Fats', 
-      grams: results.fats, 
-      calories: results.fatCalories,
-      color: 'from-warning to-primary',
-      percentage: Math.round((results.fatCalories / results.dailyCalories) * 100)
-    },
-  ];
+export function Results({ userData, results, workoutPlan, onReset, onRecalculate }: ResultsProps) {
+  
+  const handleMakeSafer = (newTimeframe: number) => {
+    if (onRecalculate) {
+      onRecalculate({ timeframe: newTimeframe });
+    }
+  };
 
   return (
     <section className="min-h-screen py-20 px-4 bg-background">
@@ -60,39 +54,22 @@ export function Results({ userData, results, workoutPlan, onReset }: ResultsProp
           </p>
         </motion.div>
 
-        {/* Warning if applicable */}
-        {results.warning && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="mb-8 p-4 rounded-xl bg-warning/10 border border-warning/30 flex items-start gap-3"
-          >
-            <AlertTriangle className="w-5 h-5 text-warning flex-shrink-0 mt-0.5" />
-            <p className="text-sm">{results.warning}</p>
-          </motion.div>
-        )}
+        {/* Plan Quality Summary - NEW */}
+        <PlanQualitySummary userData={userData} results={results} />
 
-        {/* Main Stats Grid */}
+        {/* Enhanced Warning - NEW */}
+        <EnhancedWarning 
+          userData={userData} 
+          results={results} 
+          onMakeSafer={handleMakeSafer} 
+        />
+
+        {/* Main Stats Grid with Adaptive Calories */}
         <div className="grid md:grid-cols-3 gap-6 mb-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="glass-card rounded-2xl p-6 text-center glow-effect"
-          >
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-warning flex items-center justify-center mx-auto mb-4">
-              <Flame className="w-8 h-8 text-primary-foreground" />
-            </div>
-            <div className="text-4xl font-bold font-display gradient-text mb-2">
-              {results.dailyCalories.toLocaleString()}
-            </div>
-            <div className="text-muted-foreground">Daily Calories</div>
-            <div className="mt-3 text-sm text-muted-foreground">
-              +{results.calorieSurplus} surplus
-            </div>
-          </motion.div>
+          {/* Adaptive Calories Card - Enhanced */}
+          <AdaptiveCaloriesCard results={results} />
 
+          {/* Weekly Gain */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -100,7 +77,9 @@ export function Results({ userData, results, workoutPlan, onReset }: ResultsProp
             className="glass-card rounded-2xl p-6 text-center"
           >
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent to-success flex items-center justify-center mx-auto mb-4">
-              <TrendingUp className="w-8 h-8 text-accent-foreground" />
+              <svg className="w-8 h-8 text-accent-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              </svg>
             </div>
             <div className="text-4xl font-bold font-display mb-2">
               {results.weeklyGain.toFixed(2)}kg
@@ -114,6 +93,7 @@ export function Results({ userData, results, workoutPlan, onReset }: ResultsProp
             </div>
           </motion.div>
 
+          {/* Target Weight */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -121,7 +101,9 @@ export function Results({ userData, results, workoutPlan, onReset }: ResultsProp
             className="glass-card rounded-2xl p-6 text-center"
           >
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-secondary to-muted flex items-center justify-center mx-auto mb-4">
-              <Target className="w-8 h-8 text-secondary-foreground" />
+              <svg className="w-8 h-8 text-secondary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
             </div>
             <div className="text-4xl font-bold font-display mb-2">
               {(userData.currentWeight + userData.targetWeightGain).toFixed(1)}kg
@@ -133,102 +115,14 @@ export function Results({ userData, results, workoutPlan, onReset }: ResultsProp
           </motion.div>
         </div>
 
-        {/* TDEE Info */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35 }}
-          className="glass-card rounded-2xl p-6 mb-12"
-        >
-          <h3 className="text-xl font-semibold font-display mb-4 flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-primary" />
-            Your Metabolic Profile
-          </h3>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <div className="flex justify-between items-center p-3 rounded-lg bg-muted/50">
-                <span className="text-muted-foreground">Basal Metabolic Rate (BMR)</span>
-                <span className="font-semibold">{results.bmr} kcal</span>
-              </div>
-              <div className="flex justify-between items-center p-3 rounded-lg bg-muted/50">
-                <span className="text-muted-foreground">Total Daily Energy Expenditure</span>
-                <span className="font-semibold">{results.tdee} kcal</span>
-              </div>
-            </div>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center p-3 rounded-lg bg-muted/50">
-                <span className="text-muted-foreground">Required Daily Surplus</span>
-                <span className="font-semibold text-primary">+{results.calorieSurplus} kcal</span>
-              </div>
-              <div className="flex justify-between items-center p-3 rounded-lg bg-muted/50">
-                <span className="text-muted-foreground">Weekly Calorie Target</span>
-                <span className="font-semibold">{results.weeklyCalories.toLocaleString()} kcal</span>
-              </div>
-            </div>
-          </div>
-        </motion.div>
+        {/* Metabolic Profile - Enhanced with tooltips */}
+        <MetabolicProfile results={results} />
 
-        {/* Macros Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="glass-card rounded-2xl p-6 mb-12"
-        >
-          <h3 className="text-xl font-semibold font-display mb-6 flex items-center gap-2">
-            <Utensils className="w-5 h-5 text-primary" />
-            Daily Macro Breakdown
-          </h3>
-          <div className="grid md:grid-cols-3 gap-6">
-            {macroData.map((macro, index) => (
-              <motion.div
-                key={macro.name}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.5 + index * 0.1 }}
-                className="text-center"
-              >
-                <div className="relative w-32 h-32 mx-auto mb-4">
-                  <svg className="w-full h-full transform -rotate-90">
-                    <circle
-                      cx="64"
-                      cy="64"
-                      r="56"
-                      stroke="currentColor"
-                      strokeWidth="12"
-                      fill="none"
-                      className="text-muted"
-                    />
-                    <circle
-                      cx="64"
-                      cy="64"
-                      r="56"
-                      stroke="url(#gradient)"
-                      strokeWidth="12"
-                      fill="none"
-                      strokeDasharray={`${(macro.percentage / 100) * 352} 352`}
-                      strokeLinecap="round"
-                      className="transition-all duration-1000"
-                    />
-                    <defs>
-                      <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="hsl(var(--primary))" />
-                        <stop offset="100%" stopColor="hsl(var(--accent))" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-2xl font-bold">{macro.percentage}%</span>
-                  </div>
-                </div>
-                <div className="font-semibold text-lg">{macro.name}</div>
-                <div className="text-muted-foreground">
-                  {macro.grams}g • {macro.calories} kcal
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+        {/* Macro Breakdown with Food Equivalents - Enhanced */}
+        <MacroFoodEquivalents results={results} userData={userData} />
+
+        {/* Confidence Indicator - NEW */}
+        <ConfidenceIndicator results={results} />
 
         {/* Workout Plan Section */}
         <motion.div
@@ -311,19 +205,36 @@ export function Results({ userData, results, workoutPlan, onReset }: ResultsProp
               ))}
             </ul>
           </div>
+
+          {/* Workout Insights - NEW */}
+          <WorkoutInsights results={results} workoutPlan={workoutPlan} />
         </motion.div>
 
-        {/* Restart Button */}
+        {/* Daily Focus Checklist - NEW */}
+        <DailyFocusChecklist results={results} />
+
+        {/* Enhanced CTA Section - NEW */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.7 }}
-          className="text-center"
+          className="text-center space-y-4"
         >
-          <Button variant="hero" size="lg" onClick={onReset}>
-            <RotateCcw className="w-4 h-4 mr-2" />
-            Calculate New Plan
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button variant="hero" size="lg">
+              <Rocket className="w-4 h-4 mr-2" />
+              Start Tracking This Plan
+            </Button>
+            <Button variant="outline" size="lg" onClick={onReset}>
+              <Settings2 className="w-4 h-4 mr-2" />
+              Adjust Goals
+            </Button>
+          </div>
+          
+          <p className="text-sm text-muted-foreground flex items-center justify-center gap-1">
+            <Info className="w-3 h-3" />
+            You can modify this anytime as your progress evolves
+          </p>
         </motion.div>
       </div>
     </section>

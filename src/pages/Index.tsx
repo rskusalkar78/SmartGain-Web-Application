@@ -35,6 +35,17 @@ const Index = () => {
     setCurrentView('results');
   };
 
+  const handleRecalculate = (newData: Partial<UserData>) => {
+    if (userData) {
+      const updatedUserData = { ...userData, ...newData };
+      setUserData(updatedUserData);
+      const calculatedResults = calculateDailyPlan(updatedUserData);
+      const plan = generateWorkoutPlan(updatedUserData.workoutPreference, updatedUserData.fitnessLevel);
+      setResults(calculatedResults);
+      setWorkoutPlan(plan);
+    }
+  };
+
   const handleReset = () => {
     setCurrentView('hero');
     setUserData(null);
@@ -65,7 +76,8 @@ const Index = () => {
           userData={userData} 
           results={results} 
           workoutPlan={workoutPlan}
-          onReset={handleReset} 
+          onReset={handleReset}
+          onRecalculate={handleRecalculate}
         />
       )}
     </main>
