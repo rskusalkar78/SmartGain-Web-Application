@@ -59,7 +59,10 @@ export function EnhancedWarning({ userData, results, onMakeSafer }: EnhancedWarn
 
   // Apply the safer plan
   const handleApplySaferPlan = () => {
+    // When user confirms, close the dialog and apply the safer plan
+    // This will trigger a full recalculation of the plan upstream
     setShowSaferPlanDialog(false);
+    setShowPreview(false);
     onMakeSafer(saferTimeframe);
   };
 
@@ -313,10 +316,11 @@ export function EnhancedWarning({ userData, results, onMakeSafer }: EnhancedWarn
             </Button>
             <Button
               onClick={handleApplySaferPlan}
+              type="button"
               className="bg-accent hover:bg-accent/90 text-accent-foreground"
             >
               <Shield className="w-4 h-4 mr-2" />
-              Apply Safer Plan
+              Apply safer plan
             </Button>
           </DialogFooter>
         </DialogContent>
