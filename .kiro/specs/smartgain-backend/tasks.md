@@ -52,7 +52,7 @@ This implementation plan converts the SmartGain backend design into discrete cod
     - **Validates: Requirements 10.1, 10.3**
 
 - [ ] 3. Implement calculation engine service
-  - [ ] 3.1 Create BMR calculation functions
+  - [x] 3.1 Create BMR calculation functions
     - Implement Mifflin-St Jeor equation for men and women
     - Add input validation for age, gender, weight, height
     - Create calculation service module structure

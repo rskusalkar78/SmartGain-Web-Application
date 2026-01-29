@@ -16,9 +16,10 @@ interface EnhancedWarningProps {
   userData: UserData;
   results: CalculationResult;
   onMakeSafer: (newTimeframe: number) => void;
+  hasAppliedSaferPlan?: boolean;
 }
 
-export function EnhancedWarning({ userData, results, onMakeSafer }: EnhancedWarningProps) {
+export function EnhancedWarning({ userData, results, onMakeSafer, hasAppliedSaferPlan }: EnhancedWarningProps) {
   const [showPreview, setShowPreview] = useState(false);
   const [showSaferPlanDialog, setShowSaferPlanDialog] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -156,16 +157,17 @@ export function EnhancedWarning({ userData, results, onMakeSafer }: EnhancedWarn
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           type="button"
-          disabled={false}
+          disabled={hasAppliedSaferPlan}
           aria-label="Make plan safer by extending timeline"
         >
           <Shield className="w-4 h-4 mr-2 pointer-events-none" />
-          Make It Safer
+          {hasAppliedSaferPlan ? 'Safer plan applied' : 'Make It Safer'}
         </Button>
         <Button
           variant="outline"
           size="sm"
           className="border-warning/50 text-warning hover:bg-warning/10"
+          disabled={hasAppliedSaferPlan}
         >
           Continue Anyway
           <ArrowRight className="w-4 h-4 ml-2" />
@@ -175,6 +177,12 @@ export function EnhancedWarning({ userData, results, onMakeSafer }: EnhancedWarn
       <p className="text-xs text-muted-foreground mt-3">
         💡 We support your goals while prioritizing your health. Either choice is valid.
       </p>
+      {hasAppliedSaferPlan && (
+        <p className="text-xs text-accent mt-2 flex items-center gap-1">
+          <CheckCircle2 className="w-3 h-3" />
+          Safer plan has been applied to your results.
+        </p>
+      )}
 
       {/* Safer Plan Dialog */}
       <Dialog open={showSaferPlanDialog} onOpenChange={setShowSaferPlanDialog}>

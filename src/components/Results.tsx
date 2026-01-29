@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 import { 
   Dumbbell, ArrowLeft, ChevronRight, Rocket, 
   Settings2, Info
@@ -26,10 +27,12 @@ interface ResultsProps {
 }
 
 export function Results({ userData, results, workoutPlan, onReset, onRecalculate }: ResultsProps) {
+  const [hasAppliedSaferPlan, setHasAppliedSaferPlan] = useState(false);
   
   const handleMakeSafer = (newTimeframe: number) => {
     if (onRecalculate) {
       onRecalculate({ timeframe: newTimeframe });
+      setHasAppliedSaferPlan(true);
     }
   };
 
@@ -61,7 +64,8 @@ export function Results({ userData, results, workoutPlan, onReset, onRecalculate
         <EnhancedWarning 
           userData={userData} 
           results={results} 
-          onMakeSafer={handleMakeSafer} 
+          onMakeSafer={handleMakeSafer}
+          hasAppliedSaferPlan={hasAppliedSaferPlan}
         />
 
         {/* Main Stats Grid with Adaptive Calories */}
