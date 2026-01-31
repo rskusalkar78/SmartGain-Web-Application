@@ -25,7 +25,7 @@ export function EnhancedWarning({ userData, results, onMakeSafer, hasAppliedSafe
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   
-  if (!results.warning) return null;
+  if (!results.warning || hasAppliedSaferPlan) return null;
   
   // Calculate safer alternative
   const targetGainRate = 0.4; // kg per week (safe rate)
@@ -58,13 +58,9 @@ export function EnhancedWarning({ userData, results, onMakeSafer, hasAppliedSafe
     setShowSaferPlanDialog(true);
   };
 
-  // Apply the safer plan
-  const handleApplySaferPlan = () => {
-    // When user confirms, close the dialog and apply the safer plan
-    // This will trigger a full recalculation of the plan upstream
-    setShowSaferPlanDialog(false);
-    setShowPreview(false);
-    onMakeSafer(saferTimeframe);
+  // Auto-apply the safer plan when dialog closes
+  const handleDialogOpenChange = (open: boolean) => {
+    setShowSaferPlanDialog(open);
   };
 
   // Also handle mousedown as backup
@@ -185,7 +181,7 @@ export function EnhancedWarning({ userData, results, onMakeSafer, hasAppliedSafe
       )}
 
       {/* Safer Plan Dialog */}
-      <Dialog open={showSaferPlanDialog} onOpenChange={setShowSaferPlanDialog}>
+      <Dialog open={showSaferPlanDialog} onOpenChange={handleDialogOpenChange}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-xl">
@@ -315,20 +311,12 @@ export function EnhancedWarning({ userData, results, onMakeSafer, hasAppliedSafe
             </div>
           </div>
 
-          <DialogFooter className="flex-col sm:flex-row gap-2">
+          <DialogFooter>
             <Button
               variant="outline"
               onClick={() => setShowSaferPlanDialog(false)}
             >
               Keep Current Plan
-            </Button>
-            <Button
-              onClick={handleApplySaferPlan}
-              type="button"
-              className="bg-accent hover:bg-accent/90 text-accent-foreground"
-            >
-              <Shield className="w-4 h-4 mr-2" />
-              Apply safer plan
             </Button>
           </DialogFooter>
         </DialogContent>

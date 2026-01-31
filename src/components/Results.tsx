@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { 
   Dumbbell, ArrowLeft, ChevronRight, Rocket, 
-  Settings2, Info
+  Settings2, Info, CheckCircle2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { UserData, CalculationResult, WorkoutPlan } from '@/lib/calculations';
@@ -31,8 +31,11 @@ export function Results({ userData, results, workoutPlan, onReset, onRecalculate
   
   const handleMakeSafer = (newTimeframe: number) => {
     if (onRecalculate) {
-      onRecalculate({ timeframe: newTimeframe });
+      // First, update local state to show banner
       setHasAppliedSaferPlan(true);
+      
+      // Then recalculate with new timeframe
+      onRecalculate({ timeframe: newTimeframe });
     }
   };
 
@@ -56,6 +59,40 @@ export function Results({ userData, results, workoutPlan, onReset, onRecalculate
             Based on your goals of gaining {userData.targetWeightGain}kg in {userData.timeframe} weeks
           </p>
         </motion.div>
+
+        {/* Safer Plan Applied Banner */}
+        {hasAppliedSaferPlan && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="mb-8 p-5 rounded-xl bg-accent/10 border border-accent/30"
+          >
+            <div className="flex items-start gap-3">
+              <CheckCircle2 className="w-6 h-6 text-accent flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-accent mb-2">Safer Plan Applied! ✓</h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Your plan has been updated to a healthier, more sustainable weight gain rate.
+                </p>
+                <div className="grid sm:grid-cols-3 gap-4 text-sm">
+                  <div className="p-3 rounded-lg bg-background/50">
+                    <div className="text-xs text-muted-foreground mb-1">New Timeline</div>
+                    <div className="font-bold text-accent">{userData.timeframe} weeks</div>
+                  </div>
+                  <div className="p-3 rounded-lg bg-background/50">
+                    <div className="text-xs text-muted-foreground mb-1">Weekly Gain Rate</div>
+                    <div className="font-bold text-accent">{results.weeklyGain.toFixed(2)} kg/week</div>
+                  </div>
+                  <div className="p-3 rounded-lg bg-background/50">
+                    <div className="text-xs text-muted-foreground mb-1">Daily Calories</div>
+                    <div className="font-bold text-accent">{results.dailyCalories} kcal</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
 
         {/* Plan Quality Summary - NEW */}
         <PlanQualitySummary userData={userData} results={results} />
