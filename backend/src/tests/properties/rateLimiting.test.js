@@ -9,6 +9,12 @@ import createApp from '../../app.js';
  * 
  * Property: Rate limiting should enforce the 100 requests per 15 minutes limit 
  * and block excess requests with appropriate HTTP status codes
+ * 
+ * Test Coverage:
+ * - Rate limit header validation
+ * - Request counting accuracy
+ * - Security response format
+ * - Edge case handling
  */
 
 describe('Property 11: Rate Limiting Enforcement', () => {

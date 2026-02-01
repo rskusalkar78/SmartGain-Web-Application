@@ -8,6 +8,13 @@ import { registerSchema, loginSchema, profileUpdateSchema } from '../../utils/va
  * 
  * Property: All invalid inputs are properly rejected with meaningful error messages
  * This ensures the API maintains security by validating all user inputs according to Joi schemas
+ * 
+ * Test Coverage:
+ * - Email format validation
+ * - Password strength requirements
+ * - Profile field constraints
+ * - Security injection prevention
+ * - Schema completeness validation
  */
 
 describe('Property 10: Input Validation and Security', () => {
@@ -520,12 +527,12 @@ describe('Property 10: Input Validation and Security', () => {
   });
 
   describe('Error Message Quality', () => {
-    it('should provide meaningful error messages for validation failures', () => {
+    it('should provide comprehensive error details for validation failures', () => {
       const result = registerSchema.validate({
         email: 'invalid-email',
         password: 'weak',
-        profile: { /* missing fields */ },
-        goals: { /* missing fields */ }
+        profile: { /* missing required fields */ },
+        goals: { /* missing required fields */ }
       });
 
       expect(result.error).toBeDefined();
@@ -536,6 +543,8 @@ describe('Property 10: Input Validation and Security', () => {
       result.error.details.forEach(error => {
         expect(error.message).toBeDefined();
         expect(error.message.length).toBeGreaterThan(0);
+        expect(error.path).toBeDefined(); // Should include field path
+        expect(error.type).toBeDefined(); // Should include error type
       });
     });
   });
