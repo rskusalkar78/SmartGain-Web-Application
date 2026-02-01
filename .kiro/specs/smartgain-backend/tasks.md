@@ -46,7 +46,7 @@ This implementation plan converts the SmartGain backend design into discrete cod
     - Add input validation using Joi schemas
     - _Requirements: 2.5, 1.2, 10.1_
 
-  - [ ] 2.5 Write property tests for input validation
+  - [x] 2.5 Write property tests for input validation
 
     - **Property 10: Input Validation and Security**
     - **Validates: Requirements 10.1, 10.3**

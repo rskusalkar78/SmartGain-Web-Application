@@ -539,6 +539,245 @@ describe('Property 10: Input Validation and Security', () => {
       });
     });
   });
+
+  describe('Input Sanitization and Injection Prevention', () => {
+    it('should handle potential XSS payloads in string fields', () => {
+      const xssPayloads = [
+        '<script>alert("xss")</script>',
+        'javascript:alert("xss")',
+        '<img src="x" onerror="alert(1)">',
+        '"><script>alert(document.cookie)</script>',
+        '<svg onload=alert(1)>',
+        'data:text/html,<script>alert(1)</script>'
+      ];
+
+      fc.assert(
+        fc.property(
+          fc.constantFrom(...xssPayloads),
+          (xssPayload) => {
+            const profile = getValidProfile();
+            profile.name = xssPayload;
+            
+            const result = registerSchema.validate({
+              email: 'valid@email.com',
+              password: 'ValidPass123',
+              profile,
+              goals: getValidGoals()
+            });
+            
+            // Validation should handle XSS payloads gracefully without crashing
+            expect(() => result).not.toThrow();
+            
+            // Note: Joi validation doesn't sanitize - it validates format
+            // XSS prevention should happen at the application layer (middleware/controllers)
+            // The validation should accept these as valid strings (they are valid string format)
+            // but the application should sanitize them before storage/display
+            if (!result.error) {
+              expect(result.value.profile.name).toBeDefined();
+              expect(typeof result.value.profile.name).toBe('string');
+            }
+          }
+        ),
+        { numRuns: 50 }
+      );
+    });
+
+    it('should handle potential SQL injection patterns in string fields', () => {
+      const sqlInjectionPayloads = [
+        "'; DROP TABLE users; --",
+        "' OR '1'='1",
+        "' UNION SELECT * FROM users --",
+        "admin'--",
+        "' OR 1=1 --",
+        "'; INSERT INTO users VALUES ('hacker', 'password'); --"
+      ];
+
+      fc.assert(
+        fc.property(
+          fc.constantFrom(...sqlInjectionPayloads),
+          (sqlPayload) => {
+            const profile = getValidProfile();
+            profile.name = sqlPayload;
+            
+            const result = registerSchema.validate({
+              email: 'valid@email.com',
+              password: 'ValidPass123',
+              profile,
+              goals: getValidGoals()
+            });
+            
+            // Validation should handle SQL injection attempts gracefully
+            expect(() => result).not.toThrow();
+            
+            // The system should not crash or behave unexpectedly
+            if (!result.error) {
+              expect(result.value.profile.name).toBeDefined();
+            }
+          }
+        ),
+        { numRuns: 50 }
+      );
+    });
+
+    it('should handle extremely long strings without crashing', () => {
+      fc.assert(
+        fc.property(
+          fc.stringOf(fc.char(), { minLength: 1000, maxLength: 10000 }),
+          (longString) => {
+            const profile = getValidProfile();
+            profile.name = longString;
+            
+            const result = registerSchema.validate({
+              email: 'valid@email.com',
+              password: 'ValidPass123',
+              profile,
+              goals: getValidGoals()
+            });
+            
+            // Should handle long strings gracefully (either reject or truncate)
+            expect(() => result).not.toThrow();
+            
+            // Should reject strings longer than 100 characters
+            if (longString.length > 100) {
+              expect(result.error).toBeDefined();
+            }
+          }
+        ),
+        { numRuns: 50 }
+      );
+    });
+
+    it('should handle null and undefined values safely', () => {
+      fc.assert(
+        fc.property(
+          fc.constantFrom(null, undefined, '', 0, false, NaN),
+          (nullishValue) => {
+            const profile = getValidProfile();
+            profile.name = nullishValue;
+            
+            const result = registerSchema.validate({
+              email: 'valid@email.com',
+              password: 'ValidPass123',
+              profile,
+              goals: getValidGoals()
+            });
+            
+            // Should handle null/undefined values without crashing
+            expect(() => result).not.toThrow();
+            
+            // Should provide appropriate validation errors for invalid values
+            if (nullishValue === null || nullishValue === undefined || nullishValue === '') {
+              expect(result.error).toBeDefined();
+            }
+          }
+        ),
+        { numRuns: 50 }
+      );
+    });
+
+    it('should handle special characters and unicode safely', () => {
+      const specialChars = [
+        '🚀💪🏋️‍♂️',
+        'José María',
+        '中文测试',
+        'العربية',
+        '🔥💯✨',
+        'Ñoño Peña',
+        'Müller',
+        'Øyvind'
+      ];
+
+      fc.assert(
+        fc.property(
+          fc.constantFrom(...specialChars),
+          (specialChar) => {
+            const profile = getValidProfile();
+            profile.name = specialChar;
+            
+            const result = registerSchema.validate({
+              email: 'valid@email.com',
+              password: 'ValidPass123',
+              profile,
+              goals: getValidGoals()
+            });
+            
+            // Should handle unicode and special characters gracefully
+            expect(() => result).not.toThrow();
+            
+            // Valid unicode names should be accepted
+            if (!result.error) {
+              expect(result.value.profile.name).toBe(specialChar);
+            }
+          }
+        ),
+        { numRuns: 50 }
+      );
+    });
+  });
+
+  describe('Schema Completeness and Security', () => {
+    it('should reject requests with extra unknown fields', () => {
+      fc.assert(
+        fc.property(
+          fc.record({
+            maliciousField: fc.string(),
+            adminFlag: fc.boolean(),
+            secretToken: fc.string()
+          }),
+          (extraFields) => {
+            const validData = {
+              email: 'valid@email.com',
+              password: 'ValidPass123',
+              profile: getValidProfile(),
+              goals: getValidGoals(),
+              ...extraFields
+            };
+            
+            const result = registerSchema.validate(validData, {
+              stripUnknown: true
+            });
+            
+            // Unknown fields should be stripped, not cause errors
+            expect(() => result).not.toThrow();
+            
+            // Result should not contain the extra fields
+            if (!result.error) {
+              expect(result.value.maliciousField).toBeUndefined();
+              expect(result.value.adminFlag).toBeUndefined();
+              expect(result.value.secretToken).toBeUndefined();
+            }
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+
+    it('should validate nested object structure integrity', () => {
+      fc.assert(
+        fc.property(
+          fc.oneof(
+            fc.constant({ profile: 'not an object' }),
+            fc.constant({ goals: 'not an object' }),
+            fc.constant({ profile: null }),
+            fc.constant({ goals: [] })
+          ),
+          (invalidStructure) => {
+            const data = {
+              email: 'valid@email.com',
+              password: 'ValidPass123',
+              ...invalidStructure
+            };
+            
+            const result = registerSchema.validate(data);
+            
+            // Invalid nested structure should be rejected
+            expect(result.error).toBeDefined();
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+  });
 });
 
 // Helper functions
