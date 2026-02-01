@@ -51,7 +51,7 @@ This implementation plan converts the SmartGain backend design into discrete cod
     - **Property 10: Input Validation and Security**
     - **Validates: Requirements 10.1, 10.3**
 
-- [ ] 3. Implement calculation engine service
+- [x] 3. Implement calculation engine service
   - [x] 3.1 Create BMR calculation functions
     - Implement Mifflin-St Jeor equation for men and women
     - Add input validation for age, gender, weight, height
@@ -62,7 +62,7 @@ This implementation plan converts the SmartGain backend design into discrete cod
     - **Property 1: BMR Calculation Accuracy**
     - **Validates: Requirements 3.1**
 
-  - [ ] 3.3 Implement TDEE and weight gain calorie calculations
+  - [x] 3.3 Implement TDEE and weight gain calorie calculations
     - Create TDEE calculation with activity level factors
     - Implement weight gain calorie addition with safety thresholds
     - Add recalculation triggers for user stat updates
