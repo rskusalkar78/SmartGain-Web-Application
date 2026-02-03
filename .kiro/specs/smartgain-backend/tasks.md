@@ -58,7 +58,8 @@ This implementation plan converts the SmartGain backend design into discrete cod
     - Create calculation service module structure
     - _Requirements: 3.1_
 
-  - [ ]* 3.2 Write property test for BMR calculation accuracy
+  - [x] 3.2 Write property test for BMR calculation accuracy
+
     - **Property 1: BMR Calculation Accuracy**
     - **Validates: Requirements 3.1**
 
@@ -73,8 +74,8 @@ This implementation plan converts the SmartGain backend design into discrete cod
     - **Property 12: Calculation Recalculation Consistency**
     - **Validates: Requirements 3.2, 3.3, 3.4, 3.5**
 
-- [ ] 4. Implement nutrition intelligence service
-  - [ ] 4.1 Create Indian food database and nutrition calculations
+- [x] 4. Implement nutrition intelligence service
+  - [x] 4.1 Create Indian food database and nutrition calculations
     - Define food database with rice, roti, dal, paneer, chicken, eggs
     - Implement nutritional value calculations per 100g
     - Add food lookup and macro calculation functions
@@ -84,7 +85,7 @@ This implementation plan converts the SmartGain backend design into discrete cod
     - **Property 15: Food Database Nutritional Accuracy**
     - **Validates: Requirements 4.4**
 
-  - [ ] 4.3 Implement macro distribution calculations
+  - [x] 4.3 Implement macro distribution calculations
     - Create macro target calculation (25-30% protein, 45-55% carbs, 20-30% fats)
     - Implement meal plan generation with dietary preferences
     - Add macro adjustment based on user weight and goals
@@ -95,7 +96,7 @@ This implementation plan converts the SmartGain backend design into discrete cod
     - **Property 13: Meal Plan Dietary Preference Compliance**
     - **Validates: Requirements 4.1, 4.3**
 
-- [ ] 5. Implement data models for logging and tracking
+- [-] 5. Implement data models for logging and tracking
   - [ ] 5.1 Create body stats, calorie log, and workout log models
     - Define BodyStats schema with timestamps
     - Create CalorieLog schema with meal breakdown

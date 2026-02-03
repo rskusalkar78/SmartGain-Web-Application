@@ -15,6 +15,14 @@ import {
   validateFoodLookup
 } from './nutritionDatabase.js';
 
+import {
+  calculateMacroTargets,
+  generateMealPlan,
+  adjustMacrosForGoals,
+  MACRO_RANGES,
+  PROTEIN_PER_KG
+} from './macroCalculator.js';
+
 export {
   // Food Database
   lookupFood,
@@ -25,5 +33,12 @@ export {
   getAllFoods,
   getDBStats,
   FOOD_DATABASE,
-  validateFoodLookup
+  validateFoodLookup,
+  
+  // Macro Calculations
+  calculateMacroTargets,
+  generateMealPlan,
+  adjustMacrosForGoals,
+  MACRO_RANGES,
+  PROTEIN_PER_KG
 };
