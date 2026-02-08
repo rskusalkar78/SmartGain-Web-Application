@@ -8,6 +8,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,13 +28,14 @@ const App = () => (
             
             {/* Calculator route will be added when integrating with backend in task 10 */}
             
-            {/* Protected Routes - will be added in future tasks */}
-            {/* Example: */}
-            {/* <Route path="/app/dashboard" element={
+            {/* Protected Routes */}
+            <Route path="/app/dashboard" element={
               <ProtectedRoute>
                 <Dashboard />
               </ProtectedRoute>
-            } /> */}
+            } />
+            
+            {/* Additional protected routes will be added in future tasks */}
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

@@ -61,23 +61,23 @@ Each task builds on previous work, with no orphaned code. Testing tasks are mark
 
 ### Phase 2: Core Dashboard & Data Display
 
-- [ ] 3. Build user dashboard
-  - [ ] 3.1 Create Dashboard layout (`src/pages/Dashboard.tsx`)
+- [x] 3. Build user dashboard
+  - [x] 3.1 Create Dashboard layout (`src/pages/Dashboard.tsx`)
     - Create AppLayout component with header, sidebar, main content area
     - Add navigation menu with links to all app sections
     - Implement responsive mobile navigation (Req 15.2)
-  - [ ] 3.2 Implement Dashboard data fetching
+  - [x] 3.2 Implement Dashboard data fetching
     - Create React Query hook for dashboard data (Req 12.1, 12.2)
     - Fetch user profile, today's stats, weekly progress (Req 4.1, 4.2)
     - Display skeleton loaders during loading (Req 4.5)
     - Handle errors with retry button (Req 4.6)
-  - [ ] 3.3 Create Dashboard components
+  - [x] 3.3 Create Dashboard components
     - Create `DashboardHeader` component with welcome message
     - Create `StatsOverview` component showing weight, target, calories (Req 4.1)
     - Create `TodaySummary` component showing logged meals, workouts, calories (Req 4.2)
     - Create `QuickActions` component with action buttons (Req 4.3)
     - Create `WeeklyProgress` component with weight trend chart (Req 4.4)
-  - [ ] 3.4 Implement auto-refresh logic
+  - [x] 3.4 Implement auto-refresh logic
     - Add automatic data refresh after 5 minutes of inactivity (Req 4.7)
     - Implement background refetching on window focus (Req 12.5)
 
