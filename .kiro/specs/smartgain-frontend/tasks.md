@@ -28,33 +28,33 @@ Each task builds on previous work, with no orphaned code. Testing tasks are mark
     - Define error response types
     - Export all types for use in components
 
-- [ ] 2. Implement authentication system
-  - [ ] 2.1 Create Auth Context (`src/contexts/AuthContext.tsx`)
+- [x] 2. Implement authentication system
+  - [x] 2.1 Create Auth Context (`src/contexts/AuthContext.tsx`)
     - Implement AuthProvider with user state management (Req 2.3)
     - Add login, register, logout, refreshToken methods (Req 2.1, 2.2, 2.7)
     - Store JWT in memory and refresh token in httpOnly cookie (Req 2.3)
     - Implement automatic token refresh on 401 errors (Req 2.4, 2.5)
     - Persist auth state across page refreshes (Req 12.6)
-  - [ ] 2.2 Create useAuth hook (`src/hooks/useAuth.ts`)
+  - [x] 2.2 Create useAuth hook (`src/hooks/useAuth.ts`)
     - Export hook to access auth context
     - Provide isAuthenticated, user, login, register, logout methods
-  - [ ] 2.3 Create Login page (`src/pages/Login.tsx`)
+  - [x] 2.3 Create Login page (`src/pages/Login.tsx`)
     - Build login form with email and password fields
     - Add form validation with Zod (Req 2.6, 13.3, 13.4)
     - Display error messages for invalid credentials (Req 2.8)
     - Prevent multiple simultaneous login attempts (Req 2.9)
     - Redirect to dashboard on success (Req 2.2)
-  - [ ] 2.4 Create Register page (`src/pages/Register.tsx`)
+  - [x] 2.4 Create Register page (`src/pages/Register.tsx`)
     - Build registration form with name, email, password fields
     - Add form validation with Zod (Req 2.6)
     - Display error messages for validation failures
     - Redirect to onboarding/calculator on success (Req 2.1)
-  - [ ] 2.5 Create ProtectedRoute component (`src/components/ProtectedRoute.tsx`)
+  - [x] 2.5 Create ProtectedRoute component (`src/components/ProtectedRoute.tsx`)
     - Check authentication status before rendering (Req 3.1, 3.3)
     - Redirect to login if unauthenticated (Req 3.1)
     - Store intended destination for post-login redirect (Req 3.2)
     - Show loading indicator during auth verification (Req 3.4)
-  - [ ] 2.6 Update App.tsx routing
+  - [x] 2.6 Update App.tsx routing
     - Add routes for /login, /register
     - Wrap /app/* routes with ProtectedRoute
     - Configure public routes (/, /calculator) (Req 3.5)
