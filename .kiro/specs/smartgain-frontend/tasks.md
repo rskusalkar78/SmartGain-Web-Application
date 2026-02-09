@@ -100,19 +100,19 @@ Each task builds on previous work, with no orphaned code. Testing tasks are mark
     - Integrate MealLogger component
     - Add navigation link in sidebar
 
-- [ ] 5. Implement workout logging
-  - [ ] 5.1 Create WorkoutLogger component (`src/components/features/WorkoutLogger.tsx`)
+- [x] 5. Implement workout logging
+  - [x] 5.1 Create WorkoutLogger component (`src/components/features/WorkoutLogger.tsx`)
     - Build form with fields for type, duration, intensity (Req 7.1)
     - Add Zod validation for positive duration (Req 7.2, 13.5)
     - Display field-level error messages
     - Show workout history for current week (Req 7.8)
-  - [ ] 5.2 Implement workout logging mutation
+  - [x] 5.2 Implement workout logging mutation
     - Create React Query mutation for logging workouts (Req 7.3)
     - Implement optimistic updates
     - Show success toast and clear form on success (Req 7.4)
     - Preserve form data on error (Req 7.5)
     - Invalidate dashboard and workout logs queries
-  - [ ] 5.3 Create workout logging page/route
+  - [x] 5.3 Create workout logging page/route
     - Add route at /app/workout/log
     - Integrate WorkoutLogger component
     - Add navigation link in sidebar

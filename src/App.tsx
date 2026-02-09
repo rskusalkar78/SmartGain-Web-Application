@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import { Nutrition } from "./pages/Nutrition";
+import { Workout } from "./pages/Workout";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,11 @@ const App = () => (
             <Route path="/app/nutrition/log" element={
               <ProtectedRoute>
                 <Nutrition />
+              </ProtectedRoute>
+            } />
+            <Route path="/app/workout/log" element={
+              <ProtectedRoute>
+                <Workout />
               </ProtectedRoute>
             } />
             
