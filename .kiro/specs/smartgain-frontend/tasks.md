@@ -83,19 +83,19 @@ Each task builds on previous work, with no orphaned code. Testing tasks are mark
 
 ### Phase 3: Data Logging Features
 
-- [ ] 4. Implement meal logging
-  - [ ] 4.1 Create MealLogger component (`src/components/features/MealLogger.tsx`)
+- [x] 4. Implement meal logging
+  - [x] 4.1 Create MealLogger component (`src/components/features/MealLogger.tsx`)
     - Build form with fields for name, meal type, calories, macros (Req 6.1)
     - Add Zod validation for positive numbers (Req 6.2, 13.5)
     - Display field-level error messages (Req 13.2)
     - Show running daily calorie total (Req 6.8)
-  - [ ] 4.2 Implement meal logging mutation
+  - [x] 4.2 Implement meal logging mutation
     - Create React Query mutation for logging meals (Req 6.3)
     - Implement optimistic updates (Req 12.4)
     - Show success toast and clear form on success (Req 6.4)
     - Preserve form data on error (Req 6.5)
     - Invalidate dashboard and meal logs queries (Req 12.3)
-  - [ ] 4.3 Create meal logging page/route
+  - [x] 4.3 Create meal logging page/route
     - Add route at /app/nutrition/log
     - Integrate MealLogger component
     - Add navigation link in sidebar
