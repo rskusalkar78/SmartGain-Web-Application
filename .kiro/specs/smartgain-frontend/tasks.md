@@ -117,12 +117,12 @@ Each task builds on previous work, with no orphaned code. Testing tasks are mark
     - Integrate WorkoutLogger component
     - Add navigation link in sidebar
 
-- [ ] 6. Implement body measurement logging
-  - [ ] 6.1 Create MeasurementLogger component (`src/components/features/MeasurementLogger.tsx`)
+- [x] 6. Implement body measurement logging
+  - [x] 6.1 Create MeasurementLogger component (`src/components/features/MeasurementLogger.tsx`)
     - Build form with fields for weight, body fat, optional measurements (Req 8.1)
     - Add Zod validation for weight range (30-300 kg) (Req 8.2)
     - Display previous measurement for comparison (Req 8.7)
-  - [ ] 6.2 Implement measurement logging mutation
+  - [x] 6.2 Implement measurement logging mutation
     - Create React Query mutation for logging measurements (Req 8.3)
     - Show success toast and updated trend on success (Req 8.4)
     - Preserve form data on error (Req 8.5)
