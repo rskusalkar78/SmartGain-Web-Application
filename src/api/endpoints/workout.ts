@@ -5,6 +5,7 @@ import {
   WorkoutLogData,
   WorkoutLog,
   WorkoutPlan,
+  DateRangeParams,
 } from '../types';
 
 /**
@@ -22,12 +23,15 @@ export const workoutApi = {
 
   /**
    * Get workout logs for a specific date or date range
-   * @param date - Optional date filter (ISO string)
+   * @param params - Date filter or range parameters
    * @returns Array of workout logs
    */
-  getWorkoutLogs: (date?: string): Promise<WorkoutLog[]> => {
+  getWorkoutLogs: (params?: string | DateRangeParams): Promise<WorkoutLog[]> => {
+    // Handle legacy single date string or new object params
+    const queryParams = typeof params === 'string' ? { date: params } : params;
+
     return client.get<WorkoutLog[]>('/workout/logs', {
-      params: date ? { date } : undefined,
+      params: queryParams,
     });
   },
 

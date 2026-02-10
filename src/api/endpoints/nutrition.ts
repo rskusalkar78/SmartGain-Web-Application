@@ -7,6 +7,7 @@ import {
   MealLogData,
   MealLog,
   MealPlan,
+  DateRangeParams,
 } from '../types';
 
 /**
@@ -33,12 +34,15 @@ export const nutritionApi = {
 
   /**
    * Get meal logs for a specific date or date range
-   * @param date - Optional date filter (ISO string)
+   * @param params - Date filter or range parameters
    * @returns Array of meal logs
    */
-  getMealLogs: (date?: string): Promise<MealLog[]> => {
+  getMealLogs: (params?: string | DateRangeParams): Promise<MealLog[]> => {
+    // Handle legacy single date string or new object params
+    const queryParams = typeof params === 'string' ? { date: params } : params;
+
     return client.get<MealLog[]>('/nutrition/logs', {
-      params: date ? { date } : undefined,
+      params: queryParams,
     });
   },
 
