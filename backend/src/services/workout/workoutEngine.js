@@ -597,6 +597,179 @@ function getWorkoutStats() {
     targetMuscles: muscles
   };
 }
+/**
+ * Progressive overload configuration by fitness level
+ */
+const PROGRESSIVE_OVERLOAD_CONFIG = {
+  beginner: {
+    weightIncrease: 2.5, // kg per week
+    repIncrease: 2, // reps per week if weight can't increase
+    minWeeksBeforeIncrease: 1,
+    maxWeeksBeforeIncrease: 2
+  },
+  intermediate: {
+    weightIncrease: 1.25, // kg per week
+    repIncrease: 1,
+    minWeeksBeforeIncrease: 1,
+    maxWeeksBeforeIncrease: 3
+  },
+  advanced: {
+    weightIncrease: 0.5, // kg per week
+    repIncrease: 1,
+    minWeeksBeforeIncrease: 2,
+    maxWeeksBeforeIncrease: 4
+  }
+};
+
+/**
+ * Applies progressive overload to a workout based on performance
+ * @param {string} fitnessLevel - User's fitness level
+ * @param {Object} currentWorkout - Current workout data with sets/reps/weight
+ * @param {Object} performanceData - Performance metrics (completed sets, reps, etc.)
+ * @returns {Object} Updated workout with progressive overload applied
+ */
+function applyProgressiveOverload(fitnessLevel, currentWorkout, performanceData) {
+  try {
+    validateWorkoutRequest({ fitnessLevel });
+
+    if (!currentWorkout || !performanceData) {
+      throw new ValidationError('Current workout and performance data are required');
+    }
+
+    const config = PROGRESSIVE_OVERLOAD_CONFIG[fitnessLevel];
+    const { exerciseKey, currentWeight, currentReps, currentSets, weeksAtCurrent } = currentWorkout;
+    const { completedAllSets, completedAllReps, formQuality } = performanceData;
+
+    // Get exercise details
+    const exercise = getExercise(exerciseKey);
+
+    // Determine if ready for progression
+    const readyForProgression =
+      completedAllSets &&
+      completedAllReps &&
+      formQuality >= 7 && // Form quality on 1-10 scale
+      weeksAtCurrent >= config.minWeeksBeforeIncrease;
+
+    if (!readyForProgression) {
+      logger.debug('Not ready for progressive overload', {
+        exerciseKey,
+        completedAllSets,
+        completedAllReps,
+        formQuality,
+        weeksAtCurrent
+      });
+
+      return {
+        exerciseKey,
+        weight: currentWeight,
+        reps: currentReps,
+        sets: currentSets,
+        progressionApplied: false,
+        reason: 'Performance criteria not met'
+      };
+    }
+
+    // Apply weight increase if possible
+    let newWeight = currentWeight;
+    let newReps = currentReps;
+    let progressionType = 'none';
+
+    // For weighted exercises, increase weight
+    if (exercise.equipment !== 'none' && currentWeight > 0) {
+      newWeight = currentWeight + config.weightIncrease;
+      progressionType = 'weight';
+    }
+    // For bodyweight exercises or if weight can't increase, increase reps
+    else {
+      newReps = currentReps + config.repIncrease;
+      progressionType = 'reps';
+    }
+
+    logger.info('Progressive overload applied', {
+      exerciseKey,
+      fitnessLevel,
+      progressionType,
+      oldWeight: currentWeight,
+      newWeight,
+      oldReps: currentReps,
+      newReps
+    });
+
+    return {
+      exerciseKey,
+      weight: newWeight,
+      reps: newReps,
+      sets: currentSets,
+      progressionApplied: true,
+      progressionType,
+      weeksAtCurrent: 0 // Reset counter
+    };
+  } catch (error) {
+    logger.error('Progressive overload application failed', {
+      error: error.message,
+      fitnessLevel
+    });
+    throw error;
+  }
+}
+
+/**
+ * Calculates recommended starting weights for exercises
+ * @param {string} fitnessLevel - User's fitness level
+ * @param {string} exerciseKey - Exercise identifier
+ * @returns {Object} Recommended starting weight and reps
+ */
+function getStartingRecommendation(fitnessLevel, exerciseKey) {
+  try {
+    validateWorkoutRequest({ fitnessLevel });
+    const exercise = getExercise(exerciseKey);
+
+    // Base recommendations by fitness level
+    const recommendations = {
+      beginner: {
+        weightMultiplier: 0.5, // 50% of typical working weight
+        repsAdjustment: 2 // Add 2 reps to base
+      },
+      intermediate: {
+        weightMultiplier: 0.7,
+        repsAdjustment: 0
+      },
+      advanced: {
+        weightMultiplier: 0.85,
+        repsAdjustment: -2 // Reduce 2 reps for heavier weight
+      }
+    };
+
+    const rec = recommendations[fitnessLevel];
+
+    // For bodyweight exercises
+    if (exercise.equipment === 'none') {
+      return {
+        exerciseKey,
+        weight: 0,
+        reps: exercise.reps + rec.repsAdjustment,
+        sets: exercise.sets,
+        notes: 'Bodyweight exercise - focus on form and full range of motion'
+      };
+    }
+
+    // For weighted exercises - provide guidance
+    return {
+      exerciseKey,
+      weight: 'user-determined', // User needs to test their working weight
+      reps: exercise.reps + rec.repsAdjustment,
+      sets: exercise.sets,
+      notes: `Start with ${rec.weightMultiplier * 100}% of your estimated max. Focus on proper form.`
+    };
+  } catch (error) {
+    logger.error('Starting recommendation calculation failed', {
+      error: error.message,
+      fitnessLevel,
+      exerciseKey
+    });
+    throw error;
+  }
+}
 
 export {
   generateWeeklyPlan,
@@ -607,8 +780,185 @@ export {
   getSessionForDay,
   getWorkoutStats,
   validateWorkoutRequest,
+  applyProgressiveOverload,
+  getStartingRecommendation,
   EXERCISE_DATABASE,
   BEGINNER_TEMPLATE,
   INTERMEDIATE_TEMPLATE,
-  ADVANCED_TEMPLATE
+  ADVANCED_TEMPLATE,
+  PROGRESSIVE_OVERLOAD_CONFIG
 };
+
+/**
+ * Progressive overload configuration by fitness level
+ */
+const PROGRESSIVE_OVERLOAD_CONFIG = {
+  beginner: {
+    weightIncrease: 2.5, // kg per week
+    repIncrease: 2, // reps per week if weight can't increase
+    minWeeksBeforeIncrease: 1,
+    maxWeeksBeforeIncrease: 2
+  },
+  intermediate: {
+    weightIncrease: 1.25, // kg per week
+    repIncrease: 1,
+    minWeeksBeforeIncrease: 1,
+    maxWeeksBeforeIncrease: 3
+  },
+  advanced: {
+    weightIncrease: 0.5, // kg per week
+    repIncrease: 1,
+    minWeeksBeforeIncrease: 2,
+    maxWeeksBeforeIncrease: 4
+  }
+};
+
+/**
+ * Applies progressive overload to a workout based on performance
+ * @param {string} fitnessLevel - User's fitness level
+ * @param {Object} currentWorkout - Current workout data with sets/reps/weight
+ * @param {Object} performanceData - Performance metrics (completed sets, reps, etc.)
+ * @returns {Object} Updated workout with progressive overload applied
+ */
+function applyProgressiveOverload(fitnessLevel, currentWorkout, performanceData) {
+  try {
+    validateWorkoutRequest({ fitnessLevel });
+
+    if (!currentWorkout || !performanceData) {
+      throw new ValidationError('Current workout and performance data are required');
+    }
+
+    const config = PROGRESSIVE_OVERLOAD_CONFIG[fitnessLevel];
+    const { exerciseKey, currentWeight, currentReps, currentSets, weeksAtCurrent } = currentWorkout;
+    const { completedAllSets, completedAllReps, formQuality } = performanceData;
+
+    // Get exercise details
+    const exercise = getExercise(exerciseKey);
+
+    // Determine if ready for progression
+    const readyForProgression = 
+      completedAllSets && 
+      completedAllReps && 
+      formQuality >= 7 && // Form quality on 1-10 scale
+      weeksAtCurrent >= config.minWeeksBeforeIncrease;
+
+    if (!readyForProgression) {
+      logger.debug('Not ready for progressive overload', {
+        exerciseKey,
+        completedAllSets,
+        completedAllReps,
+        formQuality,
+        weeksAtCurrent
+      });
+
+      return {
+        exerciseKey,
+        weight: currentWeight,
+        reps: currentReps,
+        sets: currentSets,
+        progressionApplied: false,
+        reason: 'Performance criteria not met'
+      };
+    }
+
+    // Apply weight increase if possible
+    let newWeight = currentWeight;
+    let newReps = currentReps;
+    let progressionType = 'none';
+
+    // For weighted exercises, increase weight
+    if (exercise.equipment !== 'none' && currentWeight > 0) {
+      newWeight = currentWeight + config.weightIncrease;
+      progressionType = 'weight';
+    } 
+    // For bodyweight exercises or if weight can't increase, increase reps
+    else {
+      newReps = currentReps + config.repIncrease;
+      progressionType = 'reps';
+    }
+
+    logger.info('Progressive overload applied', {
+      exerciseKey,
+      fitnessLevel,
+      progressionType,
+      oldWeight: currentWeight,
+      newWeight,
+      oldReps: currentReps,
+      newReps
+    });
+
+    return {
+      exerciseKey,
+      weight: newWeight,
+      reps: newReps,
+      sets: currentSets,
+      progressionApplied: true,
+      progressionType,
+      weeksAtCurrent: 0 // Reset counter
+    };
+  } catch (error) {
+    logger.error('Progressive overload application failed', {
+      error: error.message,
+      fitnessLevel
+    });
+    throw error;
+  }
+}
+
+/**
+ * Calculates recommended starting weights for exercises
+ * @param {string} fitnessLevel - User's fitness level
+ * @param {string} exerciseKey - Exercise identifier
+ * @returns {Object} Recommended starting weight and reps
+ */
+function getStartingRecommendation(fitnessLevel, exerciseKey) {
+  try {
+    validateWorkoutRequest({ fitnessLevel });
+    const exercise = getExercise(exerciseKey);
+
+    // Base recommendations by fitness level
+    const recommendations = {
+      beginner: {
+        weightMultiplier: 0.5, // 50% of typical working weight
+        repsAdjustment: 2 // Add 2 reps to base
+      },
+      intermediate: {
+        weightMultiplier: 0.7,
+        repsAdjustment: 0
+      },
+      advanced: {
+        weightMultiplier: 0.85,
+        repsAdjustment: -2 // Reduce 2 reps for heavier weight
+      }
+    };
+
+    const rec = recommendations[fitnessLevel];
+    
+    // For bodyweight exercises
+    if (exercise.equipment === 'none') {
+      return {
+        exerciseKey,
+        weight: 0,
+        reps: exercise.reps + rec.repsAdjustment,
+        sets: exercise.sets,
+        notes: 'Bodyweight exercise - focus on form and full range of motion'
+      };
+    }
+
+    // For weighted exercises - provide guidance
+    return {
+      exerciseKey,
+      weight: 'user-determined', // User needs to test their working weight
+      reps: exercise.reps + rec.repsAdjustment,
+      sets: exercise.sets,
+      notes: `Start with ${rec.weightMultiplier * 100}% of your estimated max. Focus on proper form.`
+    };
+  } catch (error) {
+    logger.error('Starting recommendation calculation failed', {
+      error: error.message,
+      fitnessLevel,
+      exerciseKey
+    });
+    throw error;
+  }
+}

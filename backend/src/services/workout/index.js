@@ -12,10 +12,13 @@ import {
   getSessionForDay,
   getWorkoutStats,
   validateWorkoutRequest,
+  applyProgressiveOverload,
+  getStartingRecommendation,
   EXERCISE_DATABASE,
   BEGINNER_TEMPLATE,
   INTERMEDIATE_TEMPLATE,
-  ADVANCED_TEMPLATE
+  ADVANCED_TEMPLATE,
+  PROGRESSIVE_OVERLOAD_CONFIG
 } from './workoutEngine.js';
 
 export {
@@ -30,6 +33,10 @@ export {
   getExercisesByCategory,
   getExercisesByMuscle,
   
+  // Progressive Overload
+  applyProgressiveOverload,
+  getStartingRecommendation,
+  
   // Validation
   validateWorkoutRequest,
   
@@ -37,5 +44,6 @@ export {
   EXERCISE_DATABASE,
   BEGINNER_TEMPLATE,
   INTERMEDIATE_TEMPLATE,
-  ADVANCED_TEMPLATE
+  ADVANCED_TEMPLATE,
+  PROGRESSIVE_OVERLOAD_CONFIG
 };
