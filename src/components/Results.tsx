@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Dumbbell, ArrowLeft, ChevronRight, Rocket, 
   Settings2, Info, CheckCircle2
@@ -7,6 +8,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { UserData, CalculationResult, WorkoutPlan } from '@/lib/calculations';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 
 // Import new result components
 import { PlanQualitySummary } from '@/components/results/PlanQualitySummary';
@@ -28,6 +31,10 @@ interface ResultsProps {
 
 export function Results({ userData, results, workoutPlan, onReset, onRecalculate }: ResultsProps) {
   const [hasAppliedSaferPlan, setHasAppliedSaferPlan] = useState(false);
+  const [isStartingPlan, setIsStartingPlan] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const { isAuthenticated } = useAuth();
   
   const handleMakeSafer = (newTimeframe: number) => {
     if (onRecalculate) {
@@ -36,6 +43,61 @@ export function Results({ userData, results, workoutPlan, onReset, onRecalculate
       
       // Then recalculate with new timeframe
       onRecalculate({ timeframe: newTimeframe });
+    }
+  };
+
+  const handleStartTracking = async () => {
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      // Save plan data to localStorage so we can restore it after login
+      const planData = {
+        userData,
+        results,
+        workoutPlan,
+      };
+      localStorage.setItem('smartgain_pending_plan', JSON.stringify(planData));
+      
+      toast({
+        title: "Login Required",
+        description: "Please login or create an account to start tracking your plan.",
+      });
+      
+      // Redirect to login with return URL
+      navigate('/login', { state: { from: { pathname: '/app/dashboard' } } });
+      return;
+    }
+
+    setIsStartingPlan(true);
+    
+    try {
+      // Save the plan to the backend
+      const planData = {
+        userData,
+        results,
+        workoutPlan,
+        startDate: new Date().toISOString(),
+      };
+
+      // TODO: Replace with actual API call when backend is ready
+      // For now, save to localStorage
+      localStorage.setItem('smartgain_active_plan', JSON.stringify(planData));
+      
+      toast({
+        title: "Plan Activated! 🎉",
+        description: "Your personalized plan is now active. Let's start tracking your progress!",
+      });
+
+      // Redirect to dashboard after a short delay
+      setTimeout(() => {
+        navigate('/app/dashboard');
+      }, 1000);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to activate plan. Please try again.",
+        variant: "destructive",
+      });
+      setIsStartingPlan(false);
     }
   };
 
@@ -262,11 +324,16 @@ export function Results({ userData, results, workoutPlan, onReset, onRecalculate
           className="text-center space-y-4"
         >
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button variant="hero" size="lg">
+            <Button 
+              variant="hero" 
+              size="lg"
+              onClick={handleStartTracking}
+              disabled={isStartingPlan}
+            >
               <Rocket className="w-4 h-4 mr-2" />
-              Start Tracking This Plan
+              {isStartingPlan ? 'Activating Plan...' : 'Start Tracking This Plan'}
             </Button>
-            <Button variant="outline" size="lg" onClick={onReset}>
+            <Button variant="outline" size="lg" onClick={onReset} disabled={isStartingPlan}>
               <Settings2 className="w-4 h-4 mr-2" />
               Adjust Goals
             </Button>
