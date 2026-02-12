@@ -20,7 +20,8 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const navigation = [
     { name: 'Dashboard', href: '/app/dashboard', icon: Home },
     { name: 'Progress', href: '/app/progress', icon: TrendingUp },
-    { name: 'Nutrition', href: '/app/nutrition/log', icon: Utensils },
+    { name: 'Log Meal', href: '/app/nutrition/log', icon: Utensils },
+    { name: 'Meal Plan', href: '/app/nutrition/plan', icon: Utensils },
     { name: 'Workout', href: '/app/workout/log', icon: Dumbbell },
     { name: 'Profile', href: '/app/profile', icon: User },
   ];

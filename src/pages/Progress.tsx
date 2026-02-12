@@ -59,6 +59,17 @@ export function Progress() {
     queryFn: () => workoutApi.getWorkoutLogs(dateParams),
   });
 
+  // Fetch workout plan for completion rate calculation
+  const {
+    data: workoutPlan,
+    isLoading: isLoadingWorkoutPlan
+  } = useQuery({
+    queryKey: ['workoutPlan'],
+    queryFn: () => workoutApi.getWorkoutPlan(),
+    // Don't fail the whole page if workout plan doesn't exist
+    retry: false,
+  });
+
   // Fetch latest weight for comparison (for the logger)
   const {
     data: previousMeasurement,
@@ -126,6 +137,11 @@ export function Progress() {
               isLoading={isLoadingMeals}
             />
           </div>
+          <WorkoutChart 
+            data={workoutLogs || []} 
+            workoutPlan={workoutPlan}
+            isLoading={isLoadingWorkouts || isLoadingWorkoutPlan} 
+          />
         </TabsContent>
 
         <TabsContent value="weight">
@@ -141,7 +157,11 @@ export function Progress() {
         </TabsContent>
 
         <TabsContent value="workouts">
-          <WorkoutChart data={workoutLogs || []} isLoading={isLoadingWorkouts} />
+          <WorkoutChart 
+            data={workoutLogs || []} 
+            workoutPlan={workoutPlan}
+            isLoading={isLoadingWorkouts || isLoadingWorkoutPlan} 
+          />
         </TabsContent>
       </Tabs>
 

@@ -73,7 +73,11 @@ handleUnhandledRejection();
 handleUncaughtException();
 
 // Start server if this file is run directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Note: In ES modules, we need to check if this is the main module
+const isMainModule = import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}` || 
+                     import.meta.url.endsWith('/server.js');
+
+if (isMainModule) {
   startServer();
 }
 

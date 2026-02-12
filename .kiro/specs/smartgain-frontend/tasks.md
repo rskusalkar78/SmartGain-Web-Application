@@ -131,42 +131,42 @@ Each task builds on previous work, with no orphaned code. Testing tasks are mark
 ### Phase 4: Progress Tracking & Visualization
 
 - [ ] 7. Build progress tracking page
-  - [ ] 7.1 Create Progress page (`src/pages/Progress.tsx`)
+  - [x] 7.1 Create Progress page (`src/pages/Progress.tsx`)
     - Create page layout with time range selector
     - Add sections for weight chart, calorie chart, workout chart
-  - [ ] 7.2 Implement TimeRangeSelector component
+  - [x] 7.2 Implement TimeRangeSelector component
     - Create selector for 7d, 30d, 90d, all time (Req 5.5)
     - Update all charts when range changes (Req 5.4)
-  - [ ] 7.3 Create WeightChart component
+  - [x] 7.3 Create WeightChart component
     - Use Recharts to display weight line chart (Req 5.1)
     - Add interactive tooltips with exact values (Req 5.6)
     - Implement responsive sizing (Req 15.3)
     - Show empty state for insufficient data (Req 5.7)
-  - [ ] 7.4 Create CalorieChart component
+  - [x] 7.4 Create CalorieChart component
     - Use Recharts to display calorie bar chart (Req 5.2)
     - Show daily intake vs target with color coding (Req 5.8)
     - Add interactive tooltips
-  - [ ] 7.5 Create WorkoutChart component
+  - [x] 7.5 Create WorkoutChart component
     - Display workout completion rate as percentage (Req 5.3)
     - Use color-coded indicators for progress (Req 5.8)
-  - [ ] 7.6 Implement progress data fetching
+  - [x] 7.6 Implement progress data fetching
     - Create React Query hooks for weight logs, calorie logs, workout logs
     - Filter data by selected time range
     - Handle loading and error states
 
 ### Phase 5: Meal & Workout Plans
 
-- [ ] 8. Implement meal plan display
-  - [ ] 8.1 Create MealPlan page (`src/pages/MealPlan.tsx`)
+- [x] 8. Implement meal plan display
+  - [x] 8.1 Create MealPlan page (`src/pages/MealPlan.tsx`)
     - Fetch meal plan from backend (Req 10.1)
     - Display meals organized by day and meal type (Req 10.2)
     - Show calorie and macro information (Req 10.3)
     - Display skeleton loaders during loading (Req 10.5)
-  - [ ] 8.2 Create MealCard component
+  - [x] 8.2 Create MealCard component
     - Display meal details with click to expand (Req 10.4)
     - Show ingredients and preparation instructions
     - Add checkbox to mark meals as completed (Req 10.7)
-  - [ ] 8.3 Handle empty meal plan state
+  - [x] 8.3 Handle empty meal plan state
     - Display call-to-action to generate plan (Req 10.6)
     - Link to calculator or plan generation flow
 

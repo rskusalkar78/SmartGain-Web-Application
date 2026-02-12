@@ -12,6 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import { Nutrition } from "./pages/Nutrition";
 import { Workout } from "./pages/Workout";
 import { Progress } from "./pages/Progress";
+import MealPlan from "./pages/MealPlan";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -50,6 +51,11 @@ const App = () => (
             <Route path="/app/progress" element={
               <ProtectedRoute>
                 <Progress />
+              </ProtectedRoute>
+            } />
+            <Route path="/app/nutrition/plan" element={
+              <ProtectedRoute>
+                <MealPlan />
               </ProtectedRoute>
             } />
             
