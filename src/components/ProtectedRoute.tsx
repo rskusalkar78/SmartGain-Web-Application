@@ -24,11 +24,12 @@ interface ProtectedRouteProps {
  * 
  * Features:
  * - Checks authentication status before rendering children
- * - Redirects to login if unauthenticated
+ * - Allows guest mode access (when user has activated a plan without login)
+ * - Redirects to login if unauthenticated and not in guest mode
  * - Stores intended destination for post-login redirect
  * - Shows loading indicator during auth verification
  * 
- * @param children - The protected content to render if authenticated
+ * @param children - The protected content to render if authenticated or in guest mode
  * @param redirectTo - The path to redirect to if unauthenticated (default: '/login')
  * 
  * @example
@@ -47,6 +48,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
 
+  // Check if user is in guest mode
+  const isGuestMode = localStorage.getItem('smartgain_guest_mode') === 'true';
+
   // Show loading indicator while verifying authentication
   if (isLoading) {
     return (
@@ -59,13 +63,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     );
   }
 
-  // Redirect to login if not authenticated
-  // Store the current location so we can redirect back after login
-  if (!isAuthenticated) {
+  // Allow access if authenticated OR in guest mode
+  if (!isAuthenticated && !isGuestMode) {
+    // Redirect to login if not authenticated and not in guest mode
     return <Navigate to={redirectTo} state={{ from: location }} replace />;
   }
 
-  // User is authenticated, render the protected content
+  // User is authenticated or in guest mode, render the protected content
   return <>{children}</>;
 };
 

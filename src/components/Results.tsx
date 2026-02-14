@@ -47,30 +47,10 @@ export function Results({ userData, results, workoutPlan, onReset, onRecalculate
   };
 
   const handleStartTracking = async () => {
-    // Check if user is authenticated
-    if (!isAuthenticated) {
-      // Save plan data to localStorage so we can restore it after login
-      const planData = {
-        userData,
-        results,
-        workoutPlan,
-      };
-      localStorage.setItem('smartgain_pending_plan', JSON.stringify(planData));
-      
-      toast({
-        title: "Login Required",
-        description: "Please login or create an account to start tracking your plan.",
-      });
-      
-      // Redirect to login with return URL
-      navigate('/login', { state: { from: { pathname: '/app/dashboard' } } });
-      return;
-    }
-
     setIsStartingPlan(true);
     
     try {
-      // Save the plan to the backend
+      // Save the plan data
       const planData = {
         userData,
         results,
@@ -78,20 +58,31 @@ export function Results({ userData, results, workoutPlan, onReset, onRecalculate
         startDate: new Date().toISOString(),
       };
 
-      // TODO: Replace with actual API call when backend is ready
-      // For now, save to localStorage
+      // Save to localStorage (backend integration will come later)
       localStorage.setItem('smartgain_active_plan', JSON.stringify(planData));
       
-      toast({
-        title: "Plan Activated! 🎉",
-        description: "Your personalized plan is now active. Let's start tracking your progress!",
-      });
+      // If user is not authenticated, create a guest session
+      if (!isAuthenticated) {
+        // Store guest flag
+        localStorage.setItem('smartgain_guest_mode', 'true');
+        
+        toast({
+          title: "Plan Activated! 🎉",
+          description: "Your plan is ready. You can create an account later to sync across devices.",
+        });
+      } else {
+        toast({
+          title: "Plan Activated! 🎉",
+          description: "Your personalized plan is now active. Let's start tracking your progress!",
+        });
+      }
 
       // Redirect to dashboard after a short delay
       setTimeout(() => {
         navigate('/app/dashboard');
       }, 1000);
     } catch (error) {
+      console.error('Plan activation error:', error);
       toast({
         title: "Error",
         description: "Failed to activate plan. Please try again.",
