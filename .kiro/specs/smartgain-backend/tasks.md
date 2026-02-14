@@ -173,8 +173,8 @@ This implementation plan converts the SmartGain backend design into discrete cod
     - Create POST /api/v1/workout/log for workout logging
     - _Requirements: 7.3, 7.4, 7.5_
 
-- [ ] 10. Integration and final wiring
-  - [ ] 10.1 Wire all services together
+- [-] 10. Integration and final wiring
+  - [x] 10.1 Wire all services together
     - Connect calculation engine to user profile updates
     - Integrate adaptive intelligence with progress tracking
     - Link nutrition intelligence with meal planning routes

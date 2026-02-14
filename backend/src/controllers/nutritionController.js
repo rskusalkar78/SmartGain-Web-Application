@@ -1,6 +1,6 @@
 import User from '../models/User.js';
 import CalorieLog from '../models/CalorieLog.js';
-import { generateMealPlan } from '../services/nutrition/macroCalculator.js';
+import { generateUserMealPlan, calculateMealNutrition } from '../services/integration/nutritionIntegration.js';
 import logger from '../utils/logger.js';
 
 class NutritionController {
@@ -11,67 +11,36 @@ class NutritionController {
   async getMealPlan(req, res) {
     try {
       const userId = req.userId;
+      const { mealsPerDay } = req.query;
       
-      // Fetch user data
-      const user = await User.findById(userId);
-      if (!user) {
-        return res.status(404).json({
-          error: {
-            code: 'USER_NOT_FOUND',
-            message: 'User not found',
-            timestamp: new Date().toISOString()
-          }
-        });
-      }
-      
-      // Check if user has calculations
-      if (!user.calculations.targetCalories || !user.calculations.macroTargets) {
-        return res.status(400).json({
-          error: {
-            code: 'CALCULATIONS_MISSING',
-            message: 'User calculations not available. Please update profile to generate calculations.',
-            timestamp: new Date().toISOString()
-          }
-        });
-      }
-      
-      // Generate meal plan
-      const macroTargets = {
-        totalCalories: user.calculations.targetCalories,
-        macros: {
-          protein: { grams: user.calculations.macroTargets.protein },
-          carbs: { grams: user.calculations.macroTargets.carbs },
-          fats: { grams: user.calculations.macroTargets.fat }
-        }
-      };
-      
-      const mealPlan = generateMealPlan(
-        macroTargets,
-        user.profile.dietaryPreferences || ['vegetarian', 'non-vegetarian'],
-        4 // Default 4 meals per day
-      );
+      // Generate meal plan using integration
+      const mealPlan = await generateUserMealPlan(userId, {
+        mealsPerDay: mealsPerDay ? parseInt(mealsPerDay) : 4
+      });
       
       res.status(200).json({
         success: true,
-        data: {
-          mealPlan,
-          userPreferences: user.profile.dietaryPreferences
-        },
+        data: mealPlan,
         timestamp: new Date().toISOString()
       });
     } catch (error) {
-      res.status(500).json({
+      let statusCode = 500;
+      let errorCode = 'MEAL_PLAN_GENERATION_FAILED';
+      
+      if (error.message === 'User not found') {
+        statusCode = 404;
+        errorCode = 'USER_NOT_FOUND';
+      }
+      
+      res.status(statusCode).json({
         error: {
-          code: 'MEAL_PLAN_GENERATION_FAILED',
+          code: errorCode,
           message: error.message,
           timestamp: new Date().toISOString()
         }
       });
     }
   }
-}
-
-export default new NutritionController();
 
   /**
    * Log daily calorie intake
@@ -182,3 +151,6 @@ export default new NutritionController();
       });
     }
   }
+}
+
+export default new NutritionController();

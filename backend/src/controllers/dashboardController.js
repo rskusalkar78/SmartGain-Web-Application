@@ -1,8 +1,6 @@
 import User from '../models/User.js';
 import progressTracker from '../services/progress/progressTracker.js';
-import { generateMealPlan } from '../services/nutrition/macroCalculator.js';
-import { generateWeeklyPlan } from '../services/workout/workoutEngine.js';
-import { analyzeProgressAndAdapt } from '../services/adaptive/adaptiveIntelligence.js';
+import { performAdaptiveAnalysis } from '../services/integration/adaptiveIntegration.js';
 
 class DashboardController {
   /**

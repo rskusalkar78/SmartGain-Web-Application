@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import User from '../../models/User.js';
+import { recalculateUserMetrics, requiresRecalculation } from '../integration/calculationIntegration.js';
 
 class AuthService {
   constructor() {
@@ -66,6 +67,13 @@ class AuthService {
 
       // Create new user (password will be hashed by pre-save middleware)
       const user = new User(userData);
+      
+      // Calculate initial metrics if profile data is complete
+      if (user.profile.age && user.profile.height && user.profile.currentWeight && 
+          user.profile.activityLevel && user.goals.goalIntensity) {
+        await recalculateUserMetrics(user);
+      }
+      
       await user.save();
 
       // Generate token
@@ -154,18 +162,29 @@ class AuthService {
         }
       });
 
-      const user = await User.findByIdAndUpdate(
-        userId,
-        { $set: filteredUpdates },
-        { 
-          new: true, 
-          runValidators: true 
-        }
-      );
-
+      // Get user first to check if recalculation is needed
+      const user = await User.findById(userId);
       if (!user) {
         throw new Error('User not found');
       }
+
+      // Apply updates
+      Object.keys(filteredUpdates).forEach(key => {
+        const keys = key.split('.');
+        if (keys.length === 2) {
+          user[keys[0]][keys[1]] = filteredUpdates[key];
+        } else {
+          user[key] = filteredUpdates[key];
+        }
+      });
+
+      // Recalculate metrics if necessary
+      if (requiresRecalculation(filteredUpdates)) {
+        await recalculateUserMetrics(user);
+      }
+
+      // Save with validation
+      await user.save();
 
       return user.toJSON();
     } catch (error) {

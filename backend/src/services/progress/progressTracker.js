@@ -561,11 +561,68 @@ export async function logDailyStats(userId, data) {
   return results;
 }
 
+/**
+ * Get workout metrics for a user
+ * @param {string} userId - User ID
+ * @param {number} days - Number of days to analyze (default 30)
+ * @returns {Object} Workout metrics
+ */
+export async function getWorkoutMetrics(userId, days = 30) {
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - days);
+  
+  const workouts = await WorkoutLog.find({
+    userId,
+    date: { $gte: startDate }
+  }).sort({ date: -1 });
+  
+  if (workouts.length === 0) {
+    return {
+      totalWorkouts: 0,
+      averagePerWeek: 0,
+      totalVolume: 0,
+      averageIntensity: 'none',
+      period: `${days} days`
+    };
+  }
+  
+  // Calculate total volume
+  const totalVolume = workouts.reduce((sum, workout) => {
+    return sum + workout.exercises.reduce((exSum, exercise) => {
+      return exSum + (exercise.totalVolume || 0);
+    }, 0);
+  }, 0);
+  
+  // Calculate average intensity
+  const intensityMap = { light: 1, moderate: 2, high: 3 };
+  const avgIntensityValue = workouts.reduce((sum, w) => sum + (intensityMap[w.intensity] || 2), 0) / workouts.length;
+  const averageIntensity = avgIntensityValue < 1.5 ? 'light' : avgIntensityValue < 2.5 ? 'moderate' : 'high';
+  
+  // Calculate average per week
+  const averagePerWeek = Math.round((workouts.length / days) * 7 * 10) / 10;
+  
+  return {
+    totalWorkouts: workouts.length,
+    averagePerWeek,
+    totalVolume: Math.round(totalVolume),
+    averageIntensity,
+    period: `${days} days`,
+    recentWorkouts: workouts.slice(0, 5).map(w => ({
+      date: w.date,
+      workoutPlan: w.workoutPlan,
+      duration: w.duration,
+      intensity: w.intensity,
+      exerciseCount: w.exercises.length
+    }))
+  };
+}
+
 export default {
   calculateWeightTrend,
   calculateCalorieMetrics,
   detectMilestones,
   detectConcerningPatterns,
   generateProgressReport,
-  logDailyStats
+  logDailyStats,
+  getWorkoutMetrics
 };
