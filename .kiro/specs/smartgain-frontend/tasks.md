@@ -170,17 +170,17 @@ Each task builds on previous work, with no orphaned code. Testing tasks are mark
     - Display call-to-action to generate plan (Req 10.6)
     - Link to calculator or plan generation flow
 
-- [ ] 9. Implement workout plan display
-  - [ ] 9.1 Create WorkoutPlan page (`src/pages/WorkoutPlan.tsx`)
+- [x] 9. Implement workout plan display
+  - [x] 9.1 Create WorkoutPlan page (`src/pages/WorkoutPlan.tsx`)
     - Fetch workout plan from backend (Req 11.1)
     - Display workouts organized by day and muscle group (Req 11.2)
     - Show exercise details (sets, reps, rest) (Req 11.3)
     - Display skeleton loaders during loading (Req 11.5)
-  - [ ] 9.2 Create ExerciseCard component
+  - [x] 9.2 Create ExerciseCard component
     - Display exercise details with click to expand (Req 11.4)
     - Show instructions and form tips
     - Add checkbox to mark exercises as completed (Req 11.7)
-  - [ ] 9.3 Handle empty workout plan state
+  - [x] 9.3 Handle empty workout plan state
     - Display call-to-action to generate plan (Req 11.6)
     - Link to plan generation flow
 

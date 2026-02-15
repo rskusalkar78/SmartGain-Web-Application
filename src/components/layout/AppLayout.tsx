@@ -22,7 +22,8 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     { name: 'Progress', href: '/app/progress', icon: TrendingUp },
     { name: 'Log Meal', href: '/app/nutrition/log', icon: Utensils },
     { name: 'Meal Plan', href: '/app/nutrition/plan', icon: Utensils },
-    { name: 'Workout', href: '/app/workout/log', icon: Dumbbell },
+    { name: 'Log Workout', href: '/app/workout/log', icon: Dumbbell },
+    { name: 'Workout Plan', href: '/app/workout/plan', icon: Dumbbell },
     { name: 'Profile', href: '/app/profile', icon: User },
   ];
 
