@@ -6,3 +6,4 @@ export { nutritionApi } from './nutrition';
 export { workoutApi } from './workout';
 export { progressApi } from './progress';
 export { dashboardApi } from './dashboard';
+export { userApi } from './user';

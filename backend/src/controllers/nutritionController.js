@@ -1,9 +1,95 @@
 import User from '../models/User.js';
 import CalorieLog from '../models/CalorieLog.js';
 import { generateUserMealPlan, calculateMealNutrition } from '../services/integration/nutritionIntegration.js';
+import { calculateBMR } from '../services/calculation/bmrCalculator.js';
+import { calculateTDEE, calculateWeightGainCalories } from '../services/calculation/tdeeCalculator.js';
+import { calculateMacroTargets } from '../services/nutrition/macroCalculator.js';
 import logger from '../utils/logger.js';
 
 class NutritionController {
+  /**
+   * Calculate daily calorie and macro recommendations
+   * POST /api/v1/nutrition/calculate
+   */
+  async calculate(req, res) {
+    try {
+      const { 
+        age, 
+        gender, 
+        height, 
+        currentWeight, 
+        targetWeight, 
+        activityLevel, 
+        weeklyGainGoal 
+      } = req.body;
+      
+      // Validate required fields
+      if (!age || !gender || !height || !currentWeight || !targetWeight || !activityLevel || !weeklyGainGoal) {
+        return res.status(400).json({
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Missing required fields: age, gender, height, currentWeight, targetWeight, activityLevel, weeklyGainGoal',
+            timestamp: new Date().toISOString()
+          }
+        });
+      }
+      
+      // Calculate BMR
+      const bmr = calculateBMR(currentWeight, height, age, gender);
+      
+      // Calculate TDEE
+      const tdee = calculateTDEE(bmr, activityLevel);
+      
+      // Calculate weight gain calories based on weekly goal
+      // 1 kg = ~7700 calories, so weekly goal * 7700 / 7 days = daily surplus
+      const dailySurplus = (weeklyGainGoal * 7700) / 7;
+      const dailyCalories = Math.round(tdee + dailySurplus);
+      
+      // Calculate macro targets
+      const macroResult = calculateMacroTargets(
+        dailyCalories,
+        currentWeight,
+        activityLevel
+      );
+      
+      // Calculate estimated time to goal
+      const weightToGain = targetWeight - currentWeight;
+      const estimatedTimeToGoal = Math.ceil(weightToGain / weeklyGainGoal);
+      
+      logger.info('Calculation completed', {
+        bmr,
+        tdee,
+        dailyCalories,
+        weeklyGainGoal,
+        estimatedTimeToGoal
+      });
+      
+      res.status(200).json({
+        success: true,
+        data: {
+          dailyCalories,
+          protein: macroResult.macros.protein.grams,
+          carbs: macroResult.macros.carbs.grams,
+          fats: macroResult.macros.fats.grams,
+          estimatedTimeToGoal
+        },
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      logger.error('Calculation failed', {
+        error: error.message
+      });
+      
+      res.status(500).json({
+        error: {
+          code: 'CALCULATION_FAILED',
+          message: error.message,
+          timestamp: new Date().toISOString()
+        }
+      });
+    }
+  }
+
   /**
    * Get current meal plan for user
    * GET /api/v1/nutrition/meal-plan

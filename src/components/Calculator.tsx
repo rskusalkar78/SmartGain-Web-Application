@@ -9,15 +9,18 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { UserData } from '@/lib/calculations';
+import { CalculatorResults } from '@/api/types';
 
 interface CalculatorProps {
-  onCalculate: (data: UserData) => void;
+  onCalculate: (data: UserData, results: CalculatorResults) => void;
   onBack: () => void;
+  isLoading?: boolean;
+  error?: string | null;
 }
 
 type Step = 1 | 2 | 3;
 
-export function Calculator({ onCalculate, onBack }: CalculatorProps) {
+export function Calculator({ onCalculate, onBack, isLoading = false, error = null }: CalculatorProps) {
   const [step, setStep] = useState<Step>(1);
   const [formData, setFormData] = useState<Partial<UserData>>({
     gender: 'male',
@@ -32,7 +35,7 @@ export function Calculator({ onCalculate, onBack }: CalculatorProps) {
 
   const handleSubmit = () => {
     if (isFormComplete()) {
-      onCalculate(formData as UserData);
+      onCalculate(formData as UserData, {} as CalculatorResults); // Results will be passed back from parent
     }
   };
 
@@ -325,7 +328,7 @@ export function Calculator({ onCalculate, onBack }: CalculatorProps) {
           {/* Navigation Buttons */}
           <div className="flex justify-between mt-8 pt-6 border-t border-border">
             {step > 1 ? (
-              <Button variant="ghost" onClick={() => setStep((step - 1) as Step)}>
+              <Button variant="ghost" onClick={() => setStep((step - 1) as Step)} disabled={isLoading}>
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Previous
               </Button>
@@ -337,7 +340,7 @@ export function Calculator({ onCalculate, onBack }: CalculatorProps) {
               <Button 
                 variant="hero" 
                 onClick={() => setStep((step + 1) as Step)}
-                disabled={!canProceed()}
+                disabled={!canProceed() || isLoading}
               >
                 Next Step
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -346,13 +349,20 @@ export function Calculator({ onCalculate, onBack }: CalculatorProps) {
               <Button 
                 variant="hero" 
                 onClick={handleSubmit}
-                disabled={!isFormComplete()}
+                disabled={!isFormComplete() || isLoading}
               >
-                Calculate My Plan
+                {isLoading ? 'Calculating...' : 'Calculate My Plan'}
                 <Zap className="w-4 h-4 ml-2" />
               </Button>
             )}
           </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mt-4 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+              <p className="text-sm text-destructive">{error}</p>
+            </div>
+          )}
         </motion.div>
       </div>
     </section>

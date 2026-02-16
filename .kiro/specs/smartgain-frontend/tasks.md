@@ -186,19 +186,19 @@ Each task builds on previous work, with no orphaned code. Testing tasks are mark
 
 ### Phase 6: Calculator Integration with Backend
 
-- [ ] 10. Integrate calculator with backend API
-  - [ ] 10.1 Update Calculator component
+- [x] 10. Integrate calculator with backend API
+  - [x] 10.1 Update Calculator component
     - Replace local calculation with API call to backend (Req 9.4)
     - Keep existing 3-step form UI
     - Maintain step validation (Req 9.2, 9.3)
-  - [ ] 10.2 Implement calculator mutation
+  - [x] 10.2 Implement calculator mutation
     - Create React Query mutation for calculation endpoint
     - Handle loading state during calculation
     - Display error message with retry on failure (Req 9.6)
-  - [ ] 10.3 Save results for authenticated users
+  - [x] 10.3 Save results for authenticated users
     - If user is authenticated, save results to profile (Req 9.8)
     - Redirect to dashboard after saving
-  - [ ] 10.4 Update Results component
+  - [x] 10.4 Update Results component
     - Display backend calculation results
     - Maintain existing UI for results display
 

@@ -1,5 +1,5 @@
 import { generateMealPlan, calculateMacroTargets } from '../nutrition/macroCalculator.js';
-import { getFoodNutrition } from '../nutrition/nutritionDatabase.js';
+import { calculateFoodMacros } from '../nutrition/nutritionDatabase.js';
 import User from '../../models/User.js';
 import logger from '../../utils/logger.js';
 
@@ -100,7 +100,7 @@ export function calculateMealNutrition(foods) {
   let totalFat = 0;
 
   for (const food of foods) {
-    const nutrition = getFoodNutrition(food.item, food.quantity);
+    const nutrition = calculateFoodMacros(food.item, food.quantity);
     totalCalories += nutrition.calories;
     totalProtein += nutrition.protein;
     totalCarbs += nutrition.carbs;

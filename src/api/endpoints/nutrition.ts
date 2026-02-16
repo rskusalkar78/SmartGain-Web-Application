@@ -19,8 +19,9 @@ export const nutritionApi = {
    * @param data - User data for calculation (age, weight, activity level, etc.)
    * @returns Calculated daily calories and macros
    */
-  calculate: (data: CalculatorData): Promise<CalculatorResults> => {
-    return client.post<CalculatorResults>('/nutrition/calculate', data);
+  calculate: async (data: CalculatorData): Promise<CalculatorResults> => {
+    const response = await client.post<{ success: boolean; data: CalculatorResults }>('/nutrition/calculate', data);
+    return response.data;
   },
 
   /**
