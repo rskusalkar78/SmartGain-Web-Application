@@ -13,16 +13,16 @@ class NutritionController {
    */
   async calculate(req, res) {
     try {
-      const { 
-        age, 
-        gender, 
-        height, 
-        currentWeight, 
-        targetWeight, 
-        activityLevel, 
-        weeklyGainGoal 
+      const {
+        age,
+        gender,
+        height,
+        currentWeight,
+        targetWeight,
+        activityLevel,
+        weeklyGainGoal
       } = req.body;
-      
+
       // Validate required fields
       if (!age || !gender || !height || !currentWeight || !targetWeight || !activityLevel || !weeklyGainGoal) {
         return res.status(400).json({
@@ -33,29 +33,34 @@ class NutritionController {
           }
         });
       }
-      
+
       // Calculate BMR
-      const bmr = calculateBMR(currentWeight, height, age, gender);
-      
+      const bmr = calculateBMR({
+        weight: currentWeight,
+        height,
+        age,
+        gender
+      });
+
       // Calculate TDEE
       const tdee = calculateTDEE(bmr, activityLevel);
-      
+
       // Calculate weight gain calories based on weekly goal
       // 1 kg = ~7700 calories, so weekly goal * 7700 / 7 days = daily surplus
       const dailySurplus = (weeklyGainGoal * 7700) / 7;
       const dailyCalories = Math.round(tdee + dailySurplus);
-      
+
       // Calculate macro targets
       const macroResult = calculateMacroTargets(
         dailyCalories,
         currentWeight,
         activityLevel
       );
-      
+
       // Calculate estimated time to goal
       const weightToGain = targetWeight - currentWeight;
       const estimatedTimeToGoal = Math.ceil(weightToGain / weeklyGainGoal);
-      
+
       logger.info('Calculation completed', {
         bmr,
         tdee,
@@ -63,7 +68,7 @@ class NutritionController {
         weeklyGainGoal,
         estimatedTimeToGoal
       });
-      
+
       res.status(200).json({
         success: true,
         data: {
@@ -79,7 +84,7 @@ class NutritionController {
       logger.error('Calculation failed', {
         error: error.message
       });
-      
+
       res.status(500).json({
         error: {
           code: 'CALCULATION_FAILED',
@@ -98,12 +103,12 @@ class NutritionController {
     try {
       const userId = req.userId;
       const { mealsPerDay } = req.query;
-      
+
       // Generate meal plan using integration
       const mealPlan = await generateUserMealPlan(userId, {
         mealsPerDay: mealsPerDay ? parseInt(mealsPerDay) : 4
       });
-      
+
       res.status(200).json({
         success: true,
         data: mealPlan,
@@ -112,12 +117,12 @@ class NutritionController {
     } catch (error) {
       let statusCode = 500;
       let errorCode = 'MEAL_PLAN_GENERATION_FAILED';
-      
+
       if (error.message === 'User not found') {
         statusCode = 404;
         errorCode = 'USER_NOT_FOUND';
       }
-      
+
       res.status(statusCode).json({
         error: {
           code: errorCode,
@@ -136,7 +141,7 @@ class NutritionController {
     try {
       const userId = req.userId;
       const { date, meals, dailyTotals } = req.body;
-      
+
       // Validate required fields
       if (!meals || !Array.isArray(meals) || meals.length === 0) {
         return res.status(400).json({
@@ -147,7 +152,7 @@ class NutritionController {
           }
         });
       }
-      
+
       // Fetch user to get target calories
       const user = await User.findById(userId);
       if (!user) {
@@ -159,7 +164,7 @@ class NutritionController {
           }
         });
       }
-      
+
       // Calculate daily totals if not provided
       let calculatedDailyTotals = dailyTotals;
       if (!calculatedDailyTotals) {
@@ -169,7 +174,7 @@ class NutritionController {
           carbs: 0,
           fat: 0
         };
-        
+
         meals.forEach(meal => {
           calculatedDailyTotals.calories += meal.totalCalories || 0;
           calculatedDailyTotals.protein += meal.totalProtein || 0;
@@ -177,11 +182,11 @@ class NutritionController {
           calculatedDailyTotals.fat += meal.totalFat || 0;
         });
       }
-      
+
       // Check if target met
       const targetCalories = user.calculations.targetCalories || 0;
       const targetMet = targetCalories > 0 && calculatedDailyTotals.calories >= targetCalories * 0.95; // Within 5%
-      
+
       // Create calorie log entry
       const calorieLog = new CalorieLog({
         userId,
@@ -190,16 +195,16 @@ class NutritionController {
         dailyTotals: calculatedDailyTotals,
         targetMet
       });
-      
+
       await calorieLog.save();
-      
+
       logger.info('Calorie log created', {
         userId,
         date: calorieLog.date,
         totalCalories: calculatedDailyTotals.calories,
         targetMet
       });
-      
+
       res.status(201).json({
         success: true,
         message: 'Calorie log created successfully',
@@ -219,15 +224,15 @@ class NutritionController {
         userId: req.userId,
         error: error.message
       });
-      
+
       let statusCode = 500;
       let errorCode = 'CALORIE_LOG_FAILED';
-      
+
       if (error.name === 'ValidationError') {
         statusCode = 400;
         errorCode = 'VALIDATION_ERROR';
       }
-      
+
       res.status(statusCode).json({
         error: {
           code: errorCode,

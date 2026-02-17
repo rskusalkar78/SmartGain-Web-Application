@@ -13,10 +13,10 @@ function mapUserDataToCalculatorData(userData: UserData): CalculatorData {
   // Map activity level from local format to API format
   const activityLevelMap: Record<string, ActivityLevel> = {
     'sedentary': 'sedentary',
-    'light': 'lightly_active',
-    'moderate': 'moderately_active',
-    'active': 'very_active',
-    'very_active': 'extremely_active',
+    'light': 'light',
+    'moderate': 'moderate',
+    'active': 'very',
+    'very_active': 'extreme',
   };
 
   // Calculate target weight from current weight and target gain
@@ -31,7 +31,7 @@ function mapUserDataToCalculatorData(userData: UserData): CalculatorData {
     height: userData.height,
     currentWeight: userData.currentWeight,
     targetWeight: targetWeight,
-    activityLevel: activityLevelMap[userData.activityLevel] || 'moderately_active',
+    activityLevel: activityLevelMap[userData.activityLevel] || 'moderate',
     weeklyGainGoal: weeklyGainGoal,
     dietaryPreferences: [], // Optional field, can be added later
   };

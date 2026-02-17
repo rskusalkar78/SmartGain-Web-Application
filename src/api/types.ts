@@ -5,12 +5,12 @@
 // Common Types
 // ============================================================================
 
-export type ActivityLevel = 
-  | 'sedentary' 
-  | 'lightly_active' 
-  | 'moderately_active' 
-  | 'very_active' 
-  | 'extremely_active';
+export type ActivityLevel =
+  | 'sedentary'
+  | 'light'
+  | 'moderate'
+  | 'very'
+  | 'extreme';
 
 export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
 
