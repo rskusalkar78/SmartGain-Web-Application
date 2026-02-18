@@ -14,6 +14,7 @@ import { Workout } from "./pages/Workout";
 import { Progress } from "./pages/Progress";
 import MealPlan from "./pages/MealPlan";
 import WorkoutPlan from "./pages/WorkoutPlan";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,9 +31,9 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            
+
             {/* Calculator route will be added when integrating with backend in task 10 */}
-            
+
             {/* Protected Routes */}
             <Route path="/app/dashboard" element={
               <ProtectedRoute>
@@ -64,9 +65,14 @@ const App = () => (
                 <WorkoutPlan />
               </ProtectedRoute>
             } />
-            
+            <Route path="/app/profile" element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            } />
+
             {/* Additional protected routes will be added in future tasks */}
-            
+
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
