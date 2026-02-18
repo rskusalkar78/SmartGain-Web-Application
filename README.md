@@ -10,6 +10,7 @@ SmartGain is a comprehensive web application that revolutionizes healthy weight 
 
 ### 🧮 **Intelligent Calculation Engine**
 - **Advanced BMR/TDEE Calculator**: Uses Mifflin-St Jeor equation with 95%+ accuracy
+- **Backend API Integration**: Real-time calculations via RESTful API endpoints
 - **Smart Calorie Surplus**: Automatically calculates optimal daily surplus (7700 cal = 1kg formula)
 - **Adaptive Targeting**: Weekly auto-adjustments based on progress (±100-150 kcal)
 - **Health Rate Validation**: Real-time warnings for unsafe gain rates (>0.5kg/week)
