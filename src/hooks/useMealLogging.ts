@@ -2,6 +2,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { nutritionApi } from '@/api/endpoints/nutrition';
 import { dashboardApi } from '@/api/endpoints/dashboard';
 import { MealLogData, MealLog } from '@/api/types';
+import { showMutationSuccess, showMutationError } from '@/lib/toast';
+import { logError } from '@/lib/errorLogger';
 
 /**
  * Hook for logging meals with optimistic updates
@@ -56,8 +58,11 @@ export function useLogMealMutation() {
       // Invalidate and refetch related queries
       queryClient.invalidateQueries({ queryKey: ['mealLogs'] });
       queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+      
+      // Show success toast
+      showMutationSuccess('log meal', 'Your meal has been logged successfully.');
     },
-    onError: (_error, _newData, context) => {
+    onError: (error, _newData, context) => {
       // Rollback to previous state
       if (context?.previousMealLogs) {
         queryClient.setQueryData(['mealLogs'], context.previousMealLogs);
@@ -65,6 +70,10 @@ export function useLogMealMutation() {
       if (context?.previousDashboard) {
         queryClient.setQueryData(['dashboard'], context.previousDashboard);
       }
+      
+      // Log error and show toast
+      logError(error, 'Meal Logging');
+      showMutationError('log meal', error);
     },
   });
 }

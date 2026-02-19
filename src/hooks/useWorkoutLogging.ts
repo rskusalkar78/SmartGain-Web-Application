@@ -2,6 +2,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { workoutApi } from '@/api/endpoints/workout';
 import { dashboardApi } from '@/api/endpoints/dashboard';
 import { WorkoutLogData, WorkoutLog } from '@/api/types';
+import { showMutationSuccess, showMutationError } from '@/lib/toast';
+import { logError } from '@/lib/errorLogger';
 
 /**
  * Hook for logging workouts with optimistic updates
@@ -55,8 +57,11 @@ export function useLogWorkoutMutation() {
       // Invalidate and refetch related queries
       queryClient.invalidateQueries({ queryKey: ['workoutLogs'] });
       queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+      
+      // Show success toast
+      showMutationSuccess('log workout', 'Your workout has been logged successfully.');
     },
-    onError: (_error, _newData, context) => {
+    onError: (error, _newData, context) => {
       // Rollback to previous state
       if (context?.previousWorkoutLogs) {
         queryClient.setQueryData(['workoutLogs'], context.previousWorkoutLogs);
@@ -64,6 +69,10 @@ export function useLogWorkoutMutation() {
       if (context?.previousDashboard) {
         queryClient.setQueryData(['dashboard'], context.previousDashboard);
       }
+      
+      // Log error and show toast
+      logError(error, 'Workout Logging');
+      showMutationError('log workout', error);
     },
   });
 }

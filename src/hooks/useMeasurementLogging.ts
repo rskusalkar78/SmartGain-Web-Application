@@ -2,6 +2,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { progressApi } from '@/api/endpoints/progress';
 import { dashboardApi } from '@/api/endpoints/dashboard';
 import { WeightLogData, WeightLog } from '@/api/types';
+import { showMutationSuccess, showMutationError } from '@/lib/toast';
+import { logError } from '@/lib/errorLogger';
 
 /**
  * Hook for logging weight and measurements with optimistic updates
@@ -64,8 +66,11 @@ export function useLogMeasurementMutation() {
       queryClient.invalidateQueries({ queryKey: ['weightLogs'] });
       queryClient.invalidateQueries({ queryKey: ['latestWeight'] });
       queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+      
+      // Show success toast
+      showMutationSuccess('log measurement', 'Your measurements have been logged successfully.');
     },
-    onError: (_error, _newData, context) => {
+    onError: (error, _newData, context) => {
       // Rollback to previous state
       if (context?.previousWeightLogs) {
         queryClient.setQueryData(['weightLogs'], context.previousWeightLogs);
@@ -76,6 +81,10 @@ export function useLogMeasurementMutation() {
       if (context?.previousDashboard) {
         queryClient.setQueryData(['dashboard'], context.previousDashboard);
       }
+      
+      // Log error and show toast
+      logError(error, 'Measurement Logging');
+      showMutationError('log measurement', error);
     },
   });
 }
