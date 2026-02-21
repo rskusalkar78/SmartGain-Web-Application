@@ -11,6 +11,7 @@ import {
   UserData, 
   CalculationResult, 
   WorkoutPlan,
+  calculateDailyPlan,
   generateWorkoutPlan 
 } from '@/lib/calculations';
 import { CalculatorResults } from '@/api/types';
@@ -39,20 +40,30 @@ const Index = () => {
     setCurrentView('calculator');
   };
 
+  const applyPlanAndShowResults = (
+    data: UserData,
+    calculatedResults: CalculationResult,
+    plan: WorkoutPlan
+  ) => {
+    setResults(calculatedResults);
+    setWorkoutPlan(plan);
+    setCurrentView('results');
+  };
+
   const handleCalculate = async (data: UserData) => {
     setUserData(data);
     
     try {
-      // Call backend API for calculation
+      // Try backend API first
       const apiResults = await calculatorMutation.mutateAsync(data);
       
       // Convert API results to local CalculationResult format for Results component
       const calculatedResults: CalculationResult = {
-        bmr: 0, // Not provided by API, can be calculated locally if needed
-        tdee: 0, // Not provided by API, can be calculated locally if needed
+        bmr: 0,
+        tdee: 0,
         dailyCalories: apiResults.dailyCalories,
         weeklyCalories: apiResults.dailyCalories * 7,
-        calorieSurplus: 0, // Not provided by API
+        calorieSurplus: 0,
         protein: apiResults.protein,
         carbs: apiResults.carbs,
         fats: apiResults.fats,
@@ -65,10 +76,8 @@ const Index = () => {
       };
       
       const plan = generateWorkoutPlan(data.workoutPreference, data.fitnessLevel);
-      setResults(calculatedResults);
-      setWorkoutPlan(plan);
       
-      // If user is authenticated, save results to profile
+      // If user is authenticated, save results to profile then redirect or show results
       if (isAuthenticated) {
         try {
           await userApi.updateProfile({
@@ -82,20 +91,21 @@ const Index = () => {
               dailyFats: apiResults.fats,
             },
           });
-          
-          // Redirect to dashboard after saving
           navigate('/app/dashboard');
           return;
-        } catch (error) {
-          console.error('Failed to save results to profile:', error);
-          // Continue to show results even if save fails
+        } catch (profileError) {
+          console.error('Failed to save results to profile:', profileError);
         }
       }
       
-      setCurrentView('results');
+      applyPlanAndShowResults(data, calculatedResults, plan);
     } catch (error) {
-      // Error is handled by the mutation, will be displayed in Calculator component
-      console.error('Calculation failed:', error);
+      // API failed (e.g. backend not running): fall back to local calculation so user still sees a plan
+      console.warn('API calculation failed, using local calculation:', error);
+      calculatorMutation.reset();
+      const calculatedResults = calculateDailyPlan(data);
+      const plan = generateWorkoutPlan(data.workoutPreference, data.fitnessLevel);
+      applyPlanAndShowResults(data, calculatedResults, plan);
     }
   };
 
